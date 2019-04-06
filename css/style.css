@@ -1,11 +1,14 @@
 body{
     background: #FBF0D9;
+    margin: 0px;
 }
+
 h1{
     text-align: center;
+    /* font-size: 4.5em; */
     font-size: 7em;
     color: #5F4B32;
-    margin-top: 20px;
+    margin-top: 0px;
 }
 #char1, #char6, #char10{
     color: #523436;
@@ -65,9 +68,7 @@ h1{
       /* opacity: 0.3; */
 }
 .noselect {
-    -webkit-touch-callout: none; 
       -webkit-user-select: none; 
-       -khtml-user-select: none; 
          -moz-user-select: none; 
           -ms-user-select: none; 
               user-select: none; 
