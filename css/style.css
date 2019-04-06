@@ -7,6 +7,18 @@ h1{
     color: #5F4B32;
     margin-top: 20px;
 }
+#char1, #char6, #char10{
+    color: #523436;
+}
+#char2, #char5, #char11{
+    color: #8C5C42;
+}
+#char3, #char7, #char9, #char12{
+    color: #C29F91;
+}
+#char4, #char8, #char13{
+    color: #3B3B47;
+}
 .board{
     display: grid;
     grid-template-columns: repeat(4, auto);
@@ -28,6 +40,19 @@ h1{
     border-radius: 7px;
 
 }
+#tile1, #tile7, #tile12, #tile14{
+    background: #8C5C42;
+}
+#tile2, #tile8, #tile9, #tile15{
+    background: #523436;
+}
+#tile4, #tile6, #tile11, #tile13{
+    background: #C29F91;
+}
+#tile3, #tile5, #tile10{
+    background: #3B3B47;
+}
+
 .tile:hover{
       opacity: 0.9;
       cursor: pointer;
