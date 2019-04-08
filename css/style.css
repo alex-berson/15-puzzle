@@ -1,15 +1,16 @@
 body{
     background: #FBF0D9;
     margin: 0px;
+    font-family: Times, serif;
 }
 
 h1{
     text-align: center;
-    /* font-size: 4.5em; */
-    font-size: 7em;
+    font-size: 23vw;
     color: #5F4B32;
     margin-top: 0px;
 }
+
 #char1, #char6, #char10{
     color: #523436;
 }
@@ -25,22 +26,42 @@ h1{
 .board{
     display: grid;
     grid-template-columns: repeat(4, auto);
-    padding: 2px;
-    border: 20px solid #5F4B32;
-    border-radius: 10px;
-    width: 400px;
-    height: 400px;
+    padding: 1px;
+    border: 10px solid #5F4B32;
+    border-radius: 5px;
+    width: 85vw;
+    height: 85vw;
     margin: auto;
+    margin-top: 30vw;
 }
 .tile{
     background-color: #5F4B32;
     font-weight: bold;
     color: #FBF0D9;
-    padding: 25px 10px 10px 10px;
-    font-size: 40px;
+    padding: 5vw 4vw 4vw 4vw;
+    font-size: 10vw;
     text-align: center;
-    margin: 2px;
+    margin: 1px;
     border-radius: 7px;
+
+}
+@media screen and (min-width: 576px) {
+    h1{
+        font-size: 7em;
+    }
+    .board{
+        padding: 2px;
+        border: 20px solid #5F4B32;
+        border-radius: 10px;
+        width: 400px;
+        height: 400px;
+        margin-top: auto;
+    }
+    .tile{
+        margin: 2px;
+        font-size: 40px;
+        padding: 25px 10px 10px 10px;
+     }
 
 }
 #tile1, #tile7, #tile12, #tile14{
