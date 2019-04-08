@@ -81,9 +81,9 @@ h1{
       opacity: 0.9;
       cursor: pointer;
 }
-.tile:active{
+/* .tile:active{
     visibility: hidden;
-}
+} */
 #tile16{
       visibility: hidden;
       /* opacity: 0.3; */
