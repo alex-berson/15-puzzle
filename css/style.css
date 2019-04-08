@@ -25,7 +25,7 @@ h1{
 }
 .board{
     display: grid;
-    grid-template-columns: repeat(4, auto);
+    grid-template-columns: repeat(4, minmax(25%, 1fr));
     padding: 1px;
     border: 10px solid #5F4B32;
     border-radius: 5px;
