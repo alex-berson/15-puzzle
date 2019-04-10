@@ -49,15 +49,33 @@ const moveTile = id => {
     let clickedTileElement = document.querySelector(`#${id}`);
     let emptyTileElement = document.querySelector('#tile16');
 
-    const offset = Math.abs(clickedTileElement.offsetLeft - emptyTileElement.offsetLeft ||
+    let position = 0;
+    let step = 4;
+
+    const tileSize = Math.abs(clickedTileElement.offsetLeft - emptyTileElement.offsetLeft ||
         clickedTileElement.offsetTop - emptyTileElement.offsetTop);
 
-    let position = 0;
+    let direction;
+    switch(emptyTilePosition - clickedTilePosition) {
+        case 1:   
+            direction = 'left'; 
+            break;
+        case -1: 
+            direction = 'right'; 
+            break;
+        case 4:   
+            direction = 'top';
+            break;
+        case -4:   
+            direction = 'bottom'; 
+            break;
+        } 
 
-    let  moveInterval = setInterval(sliding, 5);
+    let  slidingInterval = setInterval(sliding, 5);
+    
     function sliding() {
-        if ((position <= -offset) || (position >= offset)) {     
-            clearInterval(moveInterval);
+        if ((position <= -tileSize) || (position >= tileSize)) {     
+            clearInterval(slidingInterval);
             clickedTileElement.innerHTML = '';
             clickedTileElement.id = 'tile16';
             clickedTileElement.style.removeProperty('left');
@@ -69,22 +87,10 @@ const moveTile = id => {
             emptyTileElement.id = id;
             [board[clickedTilePosition], board[emptyTilePosition]] = [board[emptyTilePosition], board[clickedTilePosition]];
         } else {
-            position += 4;
-            switch(emptyTilePosition - clickedTilePosition) {
-            case 1:   
-                direction = 'left'; 
-                break;
-            case -1: 
-                direction = 'right'; 
-                break;
-            case 4:   
-                direction = 'top';
-                break;
-            case -4:   
-                direction = 'bottom'; 
-                break;
-            } 
-        clickedTileElement.style.setProperty(direction, position + 'px');
+             //step = tileSize % step ? tileSize % step : step;
+            position += step;
+
+            clickedTileElement.style.setProperty(direction, position + 'px');
         }
     }
 }

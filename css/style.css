@@ -43,7 +43,14 @@ h1{
     border-radius: 7px;
     position: relative;
 }
-@media (min-width: 450px) {
+.footer{
+    text-align: center;
+    align-self: auto;
+    color: #FBF0D9;
+    font-size: 0.5em; 
+    margin-top:-10px;
+}
+@media (min-width: 460px) {
     h1{
         font-size: 7em;
     }
@@ -54,15 +61,20 @@ h1{
         width: 400px;
         height: 400px;
         margin-top: auto; 
+        margin-bottom: 20;
     }
     .tile{
         margin: 2px;
         font-size: 40px;
         padding: 25px 10px 10px 10px; 
     }
+    .footer{
+        margin-top:-20px;
+        font-size: 1em; 
+    }
 }
-/* (min-aspect-ratio: 16/9) */
-@media (orientation: portrait){
+
+@media (orientation: portrait) and (max-width: 460px){
     .board{
         margin-top: 30vw;
     }
