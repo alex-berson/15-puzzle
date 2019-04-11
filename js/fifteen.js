@@ -25,9 +25,11 @@ const randomizeBoard = () => {
 
 const initializeBoard = () => {
     randomizeBoard();
+
     for (i = 0; i < board.length; i++){
         let tile = document.querySelectorAll(`#tile${i+1}`)[1] || document.querySelector(`#tile${i+1}`);
         tile.addEventListener("click", function() {moveTile(this.id)});
+
         tile.innerHTML = board[i];
         tile.id = `tile${board[i]}`;
     }
@@ -45,6 +47,8 @@ const moveTile = id => {
     let emptyTilePosition = board.indexOf(16);
 
     if (!isMovePossible(clickedTilePosition, emptyTilePosition)) return;
+
+    [board[clickedTilePosition], board[emptyTilePosition]] = [board[emptyTilePosition], board[clickedTilePosition]];
 
     let clickedTileElement = document.querySelector(`#${id}`);
     let emptyTileElement = document.querySelector('#tile16');
@@ -85,12 +89,47 @@ const moveTile = id => {
 
             emptyTileElement.innerHTML = id.replace(/[^0-9]/g,'');
             emptyTileElement.id = id;
-            [board[clickedTilePosition], board[emptyTilePosition]] = [board[emptyTilePosition], board[clickedTilePosition]];
         } else {
              //step = tileSize % step ? tileSize % step : step;
             position += step;
 
             clickedTileElement.style.setProperty(direction, position + 'px');
+        }
+    }
+
+    if (isPuzzleSolved()) finalizeGame();
+}
+
+const isPuzzleSolved = () => {
+    console.log(board);
+
+    for (i = 0; i < board.length - 1; i++) {
+        if (board[i] > board[i + 1]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+const finalizeGame = () => {
+    for (i = 0; i < board.length; i++){
+        document.querySelector(`#tile${i+1}`).style.pointerEvents = "none";
+    }
+
+    let  zoomingInterval = setInterval(zooming, 1000);
+    let tileNumber = 0;
+    function zooming(){
+        if (tileNumber == 15){
+            clearInterval(zoomingInterval);
+        } else {
+            document.querySelector(`#tile${tileNumber+1}`).classList.add("zoom");
+
+            if (tileNumber) {
+                document.querySelector(`#tile${tileNumber}`).style.background = "#5F4B32";
+                document.querySelector(`#tile${tileNumber}`).classList.remove("zoom");
+
+            }
+            tileNumber++;
         }
     }
 }
