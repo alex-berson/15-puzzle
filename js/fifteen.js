@@ -26,19 +26,11 @@ const randomizeBoard = () => {
 const initializeBoard = () => {
     randomizeBoard();
 
-    for (i = 0; i < board.length; i++){
-        let tile = document.querySelectorAll(`#tile${i+1}`)[1] || document.querySelector(`#tile${i+1}`);
+    document.querySelectorAll('.tile').forEach(function(tile, index){
         tile.addEventListener("click", function() {moveTile(this.id)});
-
-        tile.innerHTML = board[i];
-        tile.id = `tile${board[i]}`;
-    }
-}
-
-const isMovePossible = (clickedTilePosition, emptyTilePosition) => {
-    if ((Math.abs(clickedTilePosition - emptyTilePosition) == 1) ||
-        (Math.abs(clickedTilePosition - emptyTilePosition) == 4)) return true;
-    return false;
+        tile.textContent = board[index];
+        tile.id = `tile${board[index]}`;
+    });
 }
 
 const moveTile = id => {
@@ -46,31 +38,37 @@ const moveTile = id => {
     let clickedTilePosition = board.indexOf(parseInt(id.replace(/[^0-9]/g,'')));
     let emptyTilePosition = board.indexOf(16);
 
-    if (!isMovePossible(clickedTilePosition, emptyTilePosition)) return;
+    let moovingTilesPosition = getMoovingTiles(emptyTilePosition, clickedTilePosition);
 
-    [board[clickedTilePosition], board[emptyTilePosition]] = [board[emptyTilePosition], board[clickedTilePosition]];
+    if (moovingTilesPosition.length == 0) return;
 
-    let clickedTileElement = document.querySelector(`#${id}`);
+    let mooovingTileElements = [];
+
+    moovingTilesPosition.forEach(function(tile, index){
+
+        mooovingTileElements[index] = document.querySelector(`#tile${tile}`);
+    });
+   
     let emptyTileElement = document.querySelector('#tile16');
 
     let position = 0;
     let step = 4;
 
-    const tileSize = Math.abs(clickedTileElement.offsetLeft - emptyTileElement.offsetLeft ||
-        clickedTileElement.offsetTop - emptyTileElement.offsetTop);
+    const tileSize = Math.abs(mooovingTileElements[0].offsetLeft - emptyTileElement.offsetLeft ||
+        mooovingTileElements[0].offsetTop - emptyTileElement.offsetTop);
 
     let direction;
     switch(emptyTilePosition - clickedTilePosition) {
-        case 1:   
+        case 1: case 2: case 3:   
             direction = 'left'; 
             break;
-        case -1: 
+            case -1: case -2: case -3: 
             direction = 'right'; 
             break;
-        case 4:   
+        case 4: case 8: case 12:   
             direction = 'top';
             break;
-        case -4:   
+        case -4: case -8: case -12:   
             direction = 'bottom'; 
             break;
         } 
@@ -80,20 +78,29 @@ const moveTile = id => {
     function sliding() {
         if ((position <= -tileSize) || (position >= tileSize)) {     
             clearInterval(slidingInterval);
-            clickedTileElement.innerHTML = '';
-            clickedTileElement.id = 'tile16';
-            clickedTileElement.style.removeProperty('left');
-            clickedTileElement.style.removeProperty('top');
-            clickedTileElement.style.removeProperty('right');
-            clickedTileElement.style.removeProperty('bottom');
 
-            emptyTileElement.innerHTML = id.replace(/[^0-9]/g,'');
-            emptyTileElement.id = id;
+            mooovingTileElements.forEach(function(tile){
+                tile.style.removeProperty('left');
+                tile.style.removeProperty('top');
+                tile.style.removeProperty('right');
+                tile.style.removeProperty('bottom');
+
+                emptyTileElement.textContent = tile.textContent;
+                emptyTileElement.id = tile.id;
+                tile.textContent = 16;
+                tile.id = "tile16";
+
+                emptyTileElement = document.querySelector('#tile16');
+                
+            });
+
         } else {
              //step = tileSize % step ? tileSize % step : step;
             position += step;
 
-            clickedTileElement.style.setProperty(direction, position + 'px');
+            mooovingTileElements.forEach(function(tile){
+                tile.style.setProperty(direction, position + 'px');
+            });
         }
     }
 
@@ -101,20 +108,22 @@ const moveTile = id => {
 }
 
 const isPuzzleSolved = () => {
-    console.log(board);
 
-    for (i = 0; i < board.length - 1; i++) {
-        if (board[i] > board[i + 1]) {
-            return false;
-        }
-    }
-    return true;
+    // for (i = 0; i < board.length - 1; i++) {
+    //     if (board[i] > board[i + 1]) {
+    //         return false;
+    //     }
+    // }
+    // return true;
+    
+    return board.every((val, i, arr) => !i || (val >= arr[i - 1]));
 }
 
 const finalizeGame = () => {
-    for (i = 0; i < board.length; i++){
-        document.querySelector(`#tile${i+1}`).style.pointerEvents = "none";
-    }
+ 
+    document.querySelectorAll('.tile').forEach(function(tile){
+        tile.style.pointerEvents = "none";
+    });
 
     let  zoomingInterval = setInterval(zooming, 1000);
     let tileNumber = 0;
@@ -122,16 +131,49 @@ const finalizeGame = () => {
         if (tileNumber == 15){
             clearInterval(zoomingInterval);
         } else {
-            document.querySelector(`#tile${tileNumber+1}`).classList.add("zoom");
-
             if (tileNumber) {
                 document.querySelector(`#tile${tileNumber}`).style.background = "#5F4B32";
                 document.querySelector(`#tile${tileNumber}`).classList.remove("zoom");
-
             }
+            document.querySelector(`#tile${tileNumber+1}`).classList.add("zoom");
+            document.querySelector(`#char${Math.floor(tileNumber/2+1)}`).classList.add("brown");
+
             tileNumber++;
         }
     }
 }
 
-window.onload = initializeBoard;
+const getMoovingTiles = (emptyTilePosition, clickedTilePosition) => {
+
+    let moovingTiles = [];
+  
+    const span =  clickedTilePosition - emptyTilePosition;
+    
+    switch (Math.abs(span)) {
+        
+        case 1: case 2: case 3: case 4: case 8: case 12:
+            
+            if (Math.min(clickedTilePosition, emptyTilePosition) % 4 > Math.max(clickedTilePosition, emptyTilePosition) % 4) break;
+            
+            const numberOfTiles = Math.abs(span) <= 3 ? Math.abs(span) : Math.abs(span/4);
+               
+            for (i = numberOfTiles; i >= 1; i--) {
+                
+                nextTileMooving = emptyTilePosition  + span/numberOfTiles;
+                moovingTiles.push(board[nextTileMooving]);
+                
+                [board[emptyTilePosition], board[nextTileMooving]] = [board[nextTileMooving], board[emptyTilePosition]];
+
+                emptyTilePosition = nextTileMooving;
+            }
+
+            break;
+        default:
+            break;
+    }
+
+    return moovingTiles;
+}
+
+window.onload = setTimeout(initializeBoard, 1);
+
