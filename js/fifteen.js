@@ -1,6 +1,7 @@
-// "use strict";
 
-let board = Array.from({length: 15}, (v, i) => i+1);
+
+let board = Array.from({length: 15}, (_, i) => i+1);
+let firstTime = true;
 
 const isPuzzleSolvable = () => {
     let numberOfInversions = 0;
@@ -14,44 +15,67 @@ const isPuzzleSolvable = () => {
 }
 
 const randomizeBoard = () => {
-    // for (let i = board.length - 1; i > 0; i--) {
+    // for (i = board.length - 1; i > 0; i--) {
     //     const j = Math.floor(Math.random() * (i + 1));
     //     [board[i], board[j]] = [board[j], board[i]];
     // }
     // board = board.sort(() => Math.random() - 0.5);
     
-    do{
+    do {
         board = board.map((a) => [Math.random(),a]).sort((a,b) => a[0]-b[0]).map((a) => a[1]);
-
         if (!isPuzzleSolvable()) [board[13], board[14]] = [board[14], board[13]];
-    } while(board.some(function(item, index){return item == index + 1;}));
+    } while(board.some((item, index) => item == index + 1));
+    // board = [1,2,3,4,5,6,7,8,9,10,15,11,13,14,12];
     
     board.push(16);
-
 }
 
 const initializeBoard = () => {
     randomizeBoard();
 
     document.querySelectorAll('.tile').forEach(function(tile){
-
-        let offsetleft =  document.querySelectorAll('.tile')[board.indexOf(parseInt(tile.id.replace(/[^0-9]/g,'')))].offsetLeft - tile.offsetLeft;
-        let offsetTop = document.querySelectorAll('.tile')[board.indexOf(parseInt(tile.id.replace(/[^0-9]/g,'')))].offsetTop - tile.offsetTop;
+        let destinationTile = document.querySelectorAll('.tile')[board.indexOf(parseInt(tile.id.replace(/[^0-9]/g,'')))];
+        let offsetleft =  destinationTile.offsetLeft - tile.offsetLeft;
+        let offsetTop = destinationTile.offsetTop - tile.offsetTop;
 
         tile.style.transition = 'all 1s ease-in-out';
         tile.style.transform = `translate(${offsetleft}px, ${offsetTop}px)`;
     });
   
     setTimeout(function() {document.querySelectorAll('.tile').forEach(function(tile, index){
-        tile.addEventListener("click", function() {moveTile(this.id)});
+
+        //    tile.addEventListener("click", function() {moveTile(this.id)});
+
         tile.textContent = board[index];
         tile.id = `tile${board[index]}`;
-        tile.removeAttribute("style");
+        tile.removeAttribute("style"); 
+        
     })}, 1000);
+
 }
 
 const moveTile = id => {
 
+    if (isPuzzleSolved()){
+
+        document.querySelectorAll('.tile').forEach(function(tile){
+            tile.style.background = "";
+            // tile.removeAttribute("style");
+        });
+        document.querySelectorAll('span').forEach(function(char){
+            // char.classList.remove("brown");
+            char.style.color = "";
+        });
+        setTimeout(function() {document.querySelectorAll('.tile').forEach(function(tile){
+            tile.removeAttribute("style");
+        });
+        document.querySelectorAll('span').forEach(function(char){
+            char.removeAttribute("style");
+        });
+        initializeBoard();}, 2000);
+
+        return;
+    }
     let clickedTilePosition = board.indexOf(parseInt(id.replace(/[^0-9]/g,'')));
     let emptyTilePosition = board.indexOf(16);
 
@@ -101,11 +125,8 @@ const moveTile = id => {
                 emptyTileElement.id = tile.id;
                 tile.textContent = 16;
                 tile.id = "tile16";
-
-                emptyTileElement = document.querySelector('#tile16');
-                
+                emptyTileElement = document.querySelector('#tile16');  
             });
-
         } else {
              //step = tileSize % step ? tileSize % step : step;
             position += step;
@@ -140,6 +161,8 @@ const finalizeGame = () => {
     let tileNumber = 0;
     function zooming(){
         if (tileNumber == 15){
+            document.querySelector(`#tile${tileNumber}`).style.background = "#5F4B32";
+            document.querySelector('#tile15').classList.remove("zoom");
             clearInterval(zoomingInterval);
         } else {
             if (tileNumber) {
@@ -152,34 +175,49 @@ const finalizeGame = () => {
             tileNumber++;
         }
     }
+
+    setTimeout(function() {document.querySelectorAll('.tile').forEach(function(tile){
+        tile.style.pointerEvents = "";
+        // tile.addEventListener("click", function() {moveTile(this.id)});
+        tile.style.transition = 'all 2s ease-in-out';
+    });
+    document.querySelectorAll('span').forEach(function(char){
+        char.classList.remove("brown");
+        char.style.color = "#5F4B32";
+        char.style.transition = 'all 2s ease-in-out';
+    });}, 16000);
+   
+
 }
 
 const getMovingTiles = (emptyTilePosition, clickedTilePosition) => {
 
     let movingTiles = [];
-  
     const span =  clickedTilePosition - emptyTilePosition;
     
     switch (Math.abs(span)) {
         
         case 1: case 2: case 3: case 4: case 8: case 12:
             
-            if (Math.min(clickedTilePosition, emptyTilePosition) % 4 > Math.max(clickedTilePosition, emptyTilePosition) % 4) break;
-            
+            if (Math.min(clickedTilePosition, emptyTilePosition) % 4 > Math.max(clickedTilePosition, emptyTilePosition) % 4) break; 
             const numberOfTiles = Math.abs(span) <= 3 ? Math.abs(span) : Math.abs(span/4);
-               
-            for (i = numberOfTiles; i >= 1; i--) {
-                
+
+            // for (i = numberOfTiles; i >= 1; i--) 
+            Array.from({length: numberOfTiles}, (_, i) => i+1).reverse().forEach(function(){
                 nextTileMoving = emptyTilePosition  + span/numberOfTiles;
                 movingTiles.push(board[nextTileMoving]);
                 [board[emptyTilePosition], board[nextTileMoving]] = [board[nextTileMoving], board[emptyTilePosition]];
                 emptyTilePosition = nextTileMoving;
-            }
+             });
         default:
             break;
     }
     return movingTiles;
 }
 
-window.onload = setTimeout(initializeBoard, 1000);
+window.onload = setTimeout(function() {
+    document.querySelectorAll('.tile').forEach(function(tile){
+        tile.addEventListener("click", function() {moveTile(this.id)});
+    });
+    initializeBoard()}, 1000);
 
