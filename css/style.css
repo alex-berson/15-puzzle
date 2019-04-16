@@ -83,12 +83,12 @@ h1{
 
 }
 
-@keyframes browning {
+/* @keyframes browning {
     to {
         color: #5F4B32;
     }
 
-}
+} */
 
 .zoom{
     z-index: 100;
@@ -96,9 +96,9 @@ h1{
                coloring 0.5s 0.5s ease-in-out forwards;
 }
 
-.brown{
+/* .brown{
     animation: browning 2s ease-in-out forwards;
-}
+} */
 
 @media (min-width: 460px) {
     h1{
@@ -126,7 +126,7 @@ h1{
     .zoom{
         z-index: 100;
         animation: scaling 1s ease-in-out forwards,
-                    coloring 0.5s 0.5s ease-in-out forwards;
+                   coloring 0.5s 0.5s ease-in-out forwards;
     }
 }
 

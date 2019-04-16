@@ -1,7 +1,7 @@
 
 
-let board = Array.from({length: 15}, (_, i) => i+1);
-let firstTime = true;
+let board;
+let firstInitialization = true;
 
 const isPuzzleSolvable = () => {
     let numberOfInversions = 0;
@@ -20,6 +20,7 @@ const randomizeBoard = () => {
     //     [board[i], board[j]] = [board[j], board[i]];
     // }
     // board = board.sort(() => Math.random() - 0.5);
+    board = Array.from({length: 15}, (_, i) => i+1);
     
     do {
         board = board.map((a) => [Math.random(),a]).sort((a,b) => a[0]-b[0]).map((a) => a[1]);
@@ -37,48 +38,43 @@ const initializeBoard = () => {
         let destinationTile = document.querySelectorAll('.tile')[board.indexOf(parseInt(tile.id.replace(/[^0-9]/g,'')))];
         let offsetleft =  destinationTile.offsetLeft - tile.offsetLeft;
         let offsetTop = destinationTile.offsetTop - tile.offsetTop;
-
+        tile.style.pointerEvents = "none";
+        if (firstInitialization) tile.addEventListener("click", function() {moveTile(this.id)});
         tile.style.transition = 'all 1s ease-in-out';
         tile.style.transform = `translate(${offsetleft}px, ${offsetTop}px)`;
     });
-  
+    firstInitialization = false;
     setTimeout(function() {document.querySelectorAll('.tile').forEach(function(tile, index){
-
-        //    tile.addEventListener("click", function() {moveTile(this.id)});
-
         tile.textContent = board[index];
         tile.id = `tile${board[index]}`;
-        tile.removeAttribute("style"); 
-        
-    })}, 1000);
+        tile.style.pointerEvents = "";
+        tile.removeAttribute("style")})}, 1000);
 
 }
-
+const wakeUp = id => {
+    document.querySelectorAll('.tile').forEach(function(tile){
+        tile.style.background = "";
+        tile.style.pointerEvents = "";
+        // tile.removeAttribute("style");
+    });
+    document.querySelectorAll('span').forEach(function(char){
+        char.style.color = "";
+    });
+    setTimeout(function() {
+        document.querySelectorAll('.tile').forEach(function(tile){
+        tile.removeAttribute("style")});
+        document.querySelectorAll('span').forEach(function(char){
+        char.removeAttribute("style")});
+        initializeBoard()}, 2000);
+}
 const moveTile = id => {
 
     if (isPuzzleSolved()){
-
-        document.querySelectorAll('.tile').forEach(function(tile){
-            tile.style.background = "";
-            // tile.removeAttribute("style");
-        });
-        document.querySelectorAll('span').forEach(function(char){
-            // char.classList.remove("brown");
-            char.style.color = "";
-        });
-        setTimeout(function() {document.querySelectorAll('.tile').forEach(function(tile){
-            tile.removeAttribute("style");
-        });
-        document.querySelectorAll('span').forEach(function(char){
-            char.removeAttribute("style");
-        });
-        initializeBoard();}, 2000);
-
+        wakeUp();
         return;
     }
     let clickedTilePosition = board.indexOf(parseInt(id.replace(/[^0-9]/g,'')));
     let emptyTilePosition = board.indexOf(16);
-
     let movingTilesPositions = getMovingTiles(emptyTilePosition, clickedTilePosition);
 
     if (movingTilesPositions.length == 0) return;
@@ -90,7 +86,6 @@ const moveTile = id => {
     });
    
     let emptyTileElement = document.querySelector('#tile16');
-
     let position = 0;
     let step = 4;
 
@@ -170,24 +165,19 @@ const finalizeGame = () => {
                 document.querySelector(`#tile${tileNumber}`).classList.remove("zoom");
             }
             document.querySelector(`#tile${tileNumber+1}`).classList.add("zoom");
-            document.querySelector(`#char${Math.floor(tileNumber/2+1)}`).classList.add("brown");
+            document.querySelector(`#tile${tileNumber+1}`).style.transition = 'background 2s ease-in-out';
+            // document.querySelector(`#char${Math.floor(tileNumber/2+1)}`).classList.add("brown");
 
+
+            document.querySelector(`#char${Math.floor(tileNumber/2+1)}`).style.transition = 'color 2s ease-in-out';
+            document.querySelector(`#char${Math.floor(tileNumber/2+1)}`).style.color = "#5F4B32";
             tileNumber++;
         }
     }
 
     setTimeout(function() {document.querySelectorAll('.tile').forEach(function(tile){
-        tile.style.pointerEvents = "";
-        // tile.addEventListener("click", function() {moveTile(this.id)});
-        tile.style.transition = 'all 2s ease-in-out';
-    });
-    document.querySelectorAll('span').forEach(function(char){
-        char.classList.remove("brown");
-        char.style.color = "#5F4B32";
-        char.style.transition = 'all 2s ease-in-out';
-    });}, 16000);
-   
-
+        tile.style.pointerEvents = ""})}, 16000);
+  
 }
 
 const getMovingTiles = (emptyTilePosition, clickedTilePosition) => {
@@ -216,8 +206,8 @@ const getMovingTiles = (emptyTilePosition, clickedTilePosition) => {
 }
 
 window.onload = setTimeout(function() {
-    document.querySelectorAll('.tile').forEach(function(tile){
-        tile.addEventListener("click", function() {moveTile(this.id)});
-    });
+    // document.querySelectorAll('.tile').forEach(function(tile){
+    //     tile.addEventListener("click", function() {moveTile(this.id)});
+    // });
     initializeBoard()}, 1000);
 
