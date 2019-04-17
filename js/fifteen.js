@@ -1,5 +1,3 @@
-
-
 let board;
 let firstInitialization = true;
 
