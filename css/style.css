@@ -1,5 +1,14 @@
+:root {
+    --sepia: #FBF0D9;
+    --darkBrown: #5F4B32;
+    --red: #523436;
+    --brown: #8C5C42;
+    --beige: #C29F91;
+    --black: #3B3B47;
+  }
+
 body{
-    background: #FBF0D9;
+    background: var(--sepia);
     margin: 0px;
     font-family: Times, serif;
 }
@@ -7,27 +16,27 @@ body{
 h1{
     text-align: center;
     font-size: 23vw;
-    color: #5F4B32;
+    color: var(--darkBrown);
     margin-top: 0px;
 }
 
 #char1, #char6, #char10{
-    color: #523436;
+    color: var(--red);
 }
 #char2, #char5, #char11{
-    color: #8C5C42;
+    color: var(--brown);
 }
 #char4, #char7, #char9, #char12{
-    color: #C29F91;
+    color: var(--beige);
 }
 #char3, #char8, #char13{
-    color: #3B3B47;
+    color: var(--black);
 }
 .board{
     display: grid;
     grid-template-columns: repeat(4, minmax(25%, 1fr));
     padding: 1px;
-    border: 10px solid #5F4B32;
+    border: 10px solid var(--darkBrown);
     border-radius: 5px;
     width: 85vw;
     height: 85vw;
@@ -35,7 +44,7 @@ h1{
 }
 .tile{
     font-weight: bold;
-    color: #FBF0D9;
+    color: var(--sepia);
     padding: 5vw 4vw 4vw 4vw;
     font-size: 10vw;
     text-align: center;
@@ -46,7 +55,7 @@ h1{
 #designed{
     text-align: center;
     align-self: auto;
-    color: #FBF0D9;
+    color: var(--sepia);
     font-size: 0.5em; 
     margin-top:-10px;
 }
@@ -78,17 +87,10 @@ h1{
 
 @keyframes coloring {
     to {
-        background: #5F4B32;
+        background: var(--darkBrown);
     }
 
 }
-
-/* @keyframes browning {
-    to {
-        color: #5F4B32;
-    }
-
-} */
 
 .zoom{
     z-index: 100;
@@ -96,17 +98,13 @@ h1{
                coloring 0.5s 0.5s ease-in-out forwards;
 }
 
-/* .brown{
-    animation: browning 2s ease-in-out forwards;
-} */
-
 @media (min-width: 460px) {
     h1{
         font-size: 7em;
     }
     .board{
         padding: 2px;
-        border: 20px solid #5F4B32;
+        border: 20px solid var(--darkBrown);
         border-radius: 10px;
         width: 400px;
         height: 400px;
@@ -137,16 +135,16 @@ h1{
 }
 
 #tile1, #tile7, #tile12, #tile14{
-    background: #8C5C42;
+    background: var(--brown);
 }
 #tile2, #tile8, #tile9, #tile15{
-    background: #523436;
+    background: var(--red);
 }
 #tile4, #tile6, #tile11, #tile13{
-    background: #C29F91;
+    background: var(--beige);
 }
 #tile3, #tile5, #tile10{
-    background: #3B3B47;
+    background: var(--black);
 }
 
 .tile:hover{

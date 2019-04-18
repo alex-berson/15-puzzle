@@ -1,5 +1,11 @@
 let board;
 let firstInitialization = true;
+const darkBrown = getComputedStyle(document.documentElement).getPropertyValue('--darkBrown');
+const initializationDuration = 1000;
+const shufflingDuration = 1000;
+const zoomingDuration = 1000;
+const wakeUpDuration = 2000;
+const gameOverDuartion = zoomingDuration * 16;
 
 const isPuzzleSolvable = () => {
     let numberOfInversions = 0;
@@ -31,14 +37,13 @@ const randomizeBoard = () => {
 
 const initializeBoard = () => {
     randomizeBoard();
-
     document.querySelectorAll('.tile').forEach(function(tile){
         let destinationTile = document.querySelectorAll('.tile')[board.indexOf(parseInt(tile.id.replace(/[^0-9]/g,'')))];
         let offsetleft =  destinationTile.offsetLeft - tile.offsetLeft;
         let offsetTop = destinationTile.offsetTop - tile.offsetTop;
         tile.style.pointerEvents = "none";
         if (firstInitialization) tile.addEventListener("click", function() {moveTile(this.id)});
-        tile.style.transition = 'all 1s ease-in-out';
+        tile.style.transition = `all ${shufflingDuration/1000}s ease-in-out`;
         tile.style.transform = `translate(${offsetleft}px, ${offsetTop}px)`;
     });
     firstInitialization = false;
@@ -46,10 +51,9 @@ const initializeBoard = () => {
         tile.textContent = board[index];
         tile.id = `tile${board[index]}`;
         tile.style.pointerEvents = "";
-        tile.removeAttribute("style")})}, 1000);
-
+        tile.removeAttribute("style")})}, shufflingDuration);
 }
-const wakeUp = id => {
+const wakeUp = () => {
     document.querySelectorAll('.tile').forEach(function(tile){
         tile.style.background = "";
         tile.style.pointerEvents = "";
@@ -63,7 +67,7 @@ const wakeUp = id => {
         tile.removeAttribute("style")});
         document.querySelectorAll('span').forEach(function(char){
         char.removeAttribute("style")});
-        initializeBoard()}, 2000);
+        initializeBoard()}, wakeUpDuration);
 }
 const moveTile = id => {
 
@@ -145,37 +149,48 @@ const isPuzzleSolved = () => {
 }
 
 const finalizeGame = () => {
- 
+    const titleLength = document.querySelectorAll('h1 span').length;
     document.querySelectorAll('.tile').forEach(function(tile){
         tile.style.pointerEvents = "none";
     });
 
-    let  zoomingInterval = setInterval(zooming, 1000);
+    let  zoomingInterval = setInterval(zooming, zoomingDuration);
     let tileNumber = 0;
     function zooming(){
         if (tileNumber == 15){
-            document.querySelector(`#tile${tileNumber}`).style.background = "#5F4B32";
+            document.querySelector(`#tile${tileNumber}`).style.background = darkBrown;
             document.querySelector('#tile15').classList.remove("zoom");
             clearInterval(zoomingInterval);
         } else {
             if (tileNumber) {
-                document.querySelector(`#tile${tileNumber}`).style.background = "#5F4B32";
+                document.querySelector(`#tile${tileNumber}`).style.background = darkBrown;
                 document.querySelector(`#tile${tileNumber}`).classList.remove("zoom");
             }
             document.querySelector(`#tile${tileNumber+1}`).classList.add("zoom");
-            document.querySelector(`#tile${tileNumber+1}`).style.transition = 'background 2s ease-in-out';
-            // document.querySelector(`#char${Math.floor(tileNumber/2+1)}`).classList.add("brown");
+            document.querySelector(`#tile${tileNumber+1}`).style.transition = `background ${wakeUpDuration/1000}s ease-in-out`;
 
 
-            document.querySelector(`#char${Math.floor(tileNumber/2+1)}`).style.transition = 'color 2s ease-in-out';
-            document.querySelector(`#char${Math.floor(tileNumber/2+1)}`).style.color = "#5F4B32";
+            // document.querySelector(`#char${Math.floor(tileNumber/2+1)}`).style.transition = 'color 2s ease-in-out';
+            // document.querySelector(`#char${Math.floor(tileNumber/2+1)}`).style.color = darkBrown;
             tileNumber++;
         }
     }
 
+    let charNumber = 1;
+    function browningTitle(){
+        if (charNumber > titleLength){
+            return;
+        } else {
+            document.querySelector(`#char${charNumber}`).style.transition = `color ${16*zoomingDuration/titleLength/1000}s ease-in-out`;
+            document.querySelector(`#char${charNumber}`).style.color = darkBrown;
+            charNumber++;
+        }
+        setTimeout(browningTitle, 16*zoomingDuration/titleLength);
+    }
+    browningTitle();
+
     setTimeout(function() {document.querySelectorAll('.tile').forEach(function(tile){
-        tile.style.pointerEvents = ""})}, 16000);
-  
+        tile.style.pointerEvents = ""})}, gameOverDuartion);
 }
 
 const getMovingTiles = (emptyTilePosition, clickedTilePosition) => {
@@ -203,9 +218,5 @@ const getMovingTiles = (emptyTilePosition, clickedTilePosition) => {
     return movingTiles;
 }
 
-window.onload = setTimeout(function() {
-    // document.querySelectorAll('.tile').forEach(function(tile){
-    //     tile.addEventListener("click", function() {moveTile(this.id)});
-    // });
-    initializeBoard()}, 1000);
+window.onload = setTimeout(initializeBoard, initializationDuration);
 
