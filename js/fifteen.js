@@ -1,12 +1,13 @@
-let board;
+let board = [];
 let firstInitialization = true;
-const darkBrown = getComputedStyle(document.documentElement).getPropertyValue('--darkBrown');
 const initializationDuration = 1000;
 const shufflingDuration = 1000;
 const zoomingDuration = 1000;
 const wakeUpDuration = 2000;
-const gameOverDuartion = zoomingDuration * 16;
-document.documentElement.style.setProperty('--boardSize',  100/window.innerWidth * Math.ceil(window.innerWidth*0.85/4)*4 + 'vw');
+const finalizationDuartion = zoomingDuration * 16;
+const darkBrown = getComputedStyle(document.documentElement).getPropertyValue('--darkBrown');
+const boardSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--boardSize').replace(/[^0-9]/g,''))/100;
+document.documentElement.style.setProperty('--boardSize', 100/window.innerWidth * Math.ceil(window.innerWidth*boardSize/4)*4 + 'vw');
 
 const isPuzzleSolvable = () => {
     let numberOfInversions = 0;
@@ -15,8 +16,8 @@ const isPuzzleSolvable = () => {
             if (board[i] > board[j]) numberOfInversions++;
         }
     }
-    if (numberOfInversions % 2 == 0) return true;    
-    return false;
+    if (numberOfInversions % 2) return false;    
+    return true;
 }
 
 const randomizeBoard = () => {
@@ -26,10 +27,32 @@ const randomizeBoard = () => {
         board = board.map((a) => [Math.random(),a]).sort((a,b) => a[0]-b[0]).map((a) => a[1]);
         if (!isPuzzleSolvable()) [board[13], board[14]] = [board[14], board[13]];
     } while(board.some((item, index) => item == index + 1));
-    // board = [1,2,3,4,5,6,7,8,9,10,15,11,13,14,12];
-    // board = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
-    
     board.push(16);
+}
+
+const getMovingTiles = (emptyTilePosition, clickedTilePosition) => {
+    let movingTiles = [];
+    const span =  clickedTilePosition - emptyTilePosition;
+    
+    switch (Math.abs(span)) {
+        
+        case 1: case 2: case 3: case 4: case 8: case 12:
+            
+            if (Math.min(clickedTilePosition, emptyTilePosition) % 4 > Math.max(clickedTilePosition, emptyTilePosition) % 4) break; 
+            const numberOfTiles = Math.abs(span) <= 3 ? Math.abs(span) : Math.abs(span/4);
+
+            for (i = numberOfTiles; i >= 1; i--){
+                nextTileMoving = emptyTilePosition  + span/numberOfTiles;
+                movingTiles.push(board[nextTileMoving]);
+                [board[emptyTilePosition], board[nextTileMoving]] = [board[nextTileMoving], board[emptyTilePosition]];
+                emptyTilePosition = nextTileMoving;
+            }
+    }
+    return movingTiles;
+}
+
+const isPuzzleSolved = () => { 
+    return board.every((val, i, arr) => !i || (val >= arr[i - 1]));
 }
 
 const initializeBoard = () => {
@@ -39,7 +62,7 @@ const initializeBoard = () => {
         let offsetleft =  destinationTile.offsetLeft - tile.offsetLeft;
         let offsetTop = destinationTile.offsetTop - tile.offsetTop;
         tile.style.pointerEvents = "none";
-        if (firstInitialization) tile.addEventListener("click", function() {moveTile(this.id)});
+        if (firstInitialization) tile.addEventListener("click", function() {moveTiles(this.id)});
         tile.style.transition = `all ${shufflingDuration/1000}s ease-in-out`;
         tile.style.transform = `translate(${offsetleft}px, ${offsetTop}px)`;
     });
@@ -50,6 +73,7 @@ const initializeBoard = () => {
         tile.style.pointerEvents = "";
         tile.removeAttribute("style")})}, shufflingDuration);
 }
+
 const wakeUp = () => {
     document.querySelectorAll('.tile').forEach(function(tile){
         tile.style.background = "";
@@ -65,7 +89,8 @@ const wakeUp = () => {
         char.removeAttribute("style")});
         initializeBoard()}, wakeUpDuration);
 }
-const moveTile = id => {
+
+const moveTiles = id => {
 
     if (isPuzzleSolved()){
         wakeUp();
@@ -90,7 +115,7 @@ const moveTile = id => {
     const tileSize = Math.abs(movingTilesElements[0].offsetLeft - emptyTileElement.offsetLeft ||
         movingTilesElements[0].offsetTop - emptyTileElement.offsetTop);
 
-    let direction;
+    let direction = '';
     switch(emptyTilePosition - clickedTilePosition) {
         case 1: case 2: case 3:   
             direction = 'left'; 
@@ -121,7 +146,7 @@ const moveTile = id => {
                 emptyTileElement = document.querySelector('#tile16');  
             });
         } else {
-            step = position + step > tileSize ? tileSize % step : step;
+            step = (position + step) > tileSize ? tileSize % step : step;
             position += step;
 
             movingTilesElements.forEach(function(tile){
@@ -130,10 +155,6 @@ const moveTile = id => {
         }
     }
     if (isPuzzleSolved()) finalizeGame();
-}
-
-const isPuzzleSolved = () => { 
-    return board.every((val, i, arr) => !i || (val >= arr[i - 1]));
 }
 
 const finalizeGame = () => {
@@ -174,32 +195,8 @@ const finalizeGame = () => {
     browningTitle();
 
     setTimeout(function() {document.querySelectorAll('.tile').forEach(function(tile){
-        tile.style.pointerEvents = ""})}, gameOverDuartion);
+        tile.style.pointerEvents = ""})}, finalizationDuartion);
 }
 
-const getMovingTiles = (emptyTilePosition, clickedTilePosition) => {
-
-    let movingTiles = [];
-    const span =  clickedTilePosition - emptyTilePosition;
-    
-    switch (Math.abs(span)) {
-        
-        case 1: case 2: case 3: case 4: case 8: case 12:
-            
-            if (Math.min(clickedTilePosition, emptyTilePosition) % 4 > Math.max(clickedTilePosition, emptyTilePosition) % 4) break; 
-            const numberOfTiles = Math.abs(span) <= 3 ? Math.abs(span) : Math.abs(span/4);
-
-            // for (i = numberOfTiles; i >= 1; i--) 
-            Array.from({length: numberOfTiles}, (_, i) => i+1).reverse().forEach(function(){
-                nextTileMoving = emptyTilePosition  + span/numberOfTiles;
-                movingTiles.push(board[nextTileMoving]);
-                [board[emptyTilePosition], board[nextTileMoving]] = [board[nextTileMoving], board[emptyTilePosition]];
-                emptyTilePosition = nextTileMoving;
-             });
-        default:
-            break;
-    }
-    return movingTiles;
-}
 window.onload = setTimeout(initializeBoard, initializationDuration);
 
