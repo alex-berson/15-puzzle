@@ -15,5 +15,5 @@ You can try to solve 15 puzzle [online](https://github.com/alex-berson/fifteen-p
 
 ## License
 
-Copyright &copy; 2019 [Alexander Berson](mailto:alex@berson.net). This project is licensed under the [MIT license](LICENSE.txt "MIT License").
+Copyright &copy; 2019 Alexander Berson. This project is licensed under the [MIT license](LICENSE.txt "MIT License").
 
