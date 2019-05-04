@@ -27,6 +27,7 @@ const randomizeBoard = () => {
         board = board.map((a) => [Math.random(),a]).sort((a,b) => a[0]-b[0]).map((a) => a[1]);
         if (!isPuzzleSolvable()) [board[13], board[14]] = [board[14], board[13]];
     } while(board.some((item, index) => item == index + 1));
+    // board = [1,2,3,4,5,6,7,8,9,10,15,11,13,14,12];
     board.push(16);
 }
 
@@ -76,8 +77,8 @@ const initializeBoard = () => {
 
 const wakeUp = () => {
     document.querySelectorAll('.tile').forEach(function(tile){
+        tile.style.pointerEvents = "none";
         tile.style.background = "";
-        tile.style.pointerEvents = "";
     });
     document.querySelectorAll('span').forEach(function(char){
         char.style.color = "";
@@ -101,6 +102,9 @@ const moveTiles = id => {
     let movingTilesPositions = getMovingTiles(emptyTilePosition, clickedTilePosition);
 
     if (movingTilesPositions.length == 0) return;
+    document.querySelectorAll('.tile').forEach(function(tile){
+        tile.style.pointerEvents = "none";
+    });
 
     let movingTilesElements = [];
 
@@ -136,15 +140,17 @@ const moveTiles = id => {
     function sliding() {
         if (position >= tileSize) {     
             clearInterval(slidingInterval);
-
-            movingTilesElements.forEach(function(tile){
+            document.querySelectorAll('.tile').forEach(function(tile){
                 tile.removeAttribute("style");
+            });
+            movingTilesElements.forEach(function(tile){
                 emptyTileElement.textContent = tile.textContent;
                 emptyTileElement.id = tile.id;
                 tile.textContent = 16;
                 tile.id = "tile16";
                 emptyTileElement = document.querySelector('#tile16');  
             });
+            if (isPuzzleSolved()) finalizeGame();
         } else {
             step = (position + step) > tileSize ? tileSize % step : step;
             position += step;
@@ -154,7 +160,6 @@ const moveTiles = id => {
             });
         }
     }
-    if (isPuzzleSolved()) finalizeGame();
 }
 
 const finalizeGame = () => {

@@ -1,3 +1,14 @@
+@font-face {
+    font-family: 'Lora';
+    src: url(../fonts/Lora-Regular.ttf);
+}
+
+@font-face {
+    font-family: 'Lora';
+    src: url(../fonts/Lora-Bold.ttf);
+    font-weight: bold;
+}
+
 :root {
     --sepia: #FBF0D9;
     --darkBrown: #5F4B32;
@@ -9,14 +20,14 @@
   }
 
 body{
+    font-family: Lora, serif;
     background: var(--sepia);
     margin: 0px;
-    font-family: Times, serif;
 }
 
 h1{
     text-align: center;
-    font-size: 23vw;
+    font-size: 21vw;
     color: var(--darkBrown);
     margin-top: 0px;
 }
@@ -38,7 +49,7 @@ h1{
     grid-template-columns: repeat(4, minmax(25%, 1fr));
     padding: 1px;
     border: 10px solid var(--darkBrown);
-    border-radius: 5px;
+    border-radius: 7px;
     width: var(--boardSize);
     height: var(--boardSize);
     margin: auto;
@@ -46,7 +57,7 @@ h1{
 .tile{
     font-weight: bold;
     color: var(--sepia);
-    padding: 5vw 4vw 4vw 4vw;
+    padding: 4vw 3vw 3vw 3vw;
     font-size: 10vw;
     text-align: center;
     margin: 1px;
@@ -57,8 +68,9 @@ h1{
     text-align: center;
     align-self: auto;
     color: var(--sepia);
-    font-size: 0.5em; 
-    margin-top:-10px;
+    font-size: 0.43em; 
+    margin-top: -1.3em;
+
 }
 a{
     text-decoration: none;
@@ -77,18 +89,6 @@ a{
     }
 }
 
-@keyframes scalingS {
-    0% {
-        transform: scale(1.0);
-    }
-    50% {
-        transform: scale(1.3);
-    }
-    100% {
-        transform: scale(1.0);
-    }
-}
-
 @keyframes coloring {
     to {
         background: var(--darkBrown);
@@ -97,13 +97,13 @@ a{
 
 .zoom{
     z-index: 100;
-    animation: scalingS 1s ease-in-out forwards,
+    animation: scaling 1s ease-in-out forwards,
                coloring 0.5s 0.5s ease-in-out forwards;
 }
 
 @media (min-width: 460px) {
     h1{
-        font-size: 7em;
+        font-size: 6.4em;
     }
     .board{
         padding: 2px;
@@ -117,29 +117,17 @@ a{
     .tile{
         margin: 2px;
         font-size: 40px;
-        padding: 25px 10px 10px 10px; 
+        padding: 22px 10px 10px 10px; 
     }
 
     #designed{
-        margin-top:-20px;
-        font-size: 1em; 
-    }
-    .zoom{
-        z-index: 100;
-        animation: scaling 1s ease-in-out forwards,
-                   coloring 0.5s 0.5s ease-in-out forwards;
+        font-size: 0.9em; 
     }
 }
 
 @media (orientation: portrait) and (max-width: 460px){
     .board{
-        margin-top: 30vw;
-    }
-}
-
-@media (orientation: portrait) and (max-aspect-ratio: 9/18){
-    .board{
-        margin-top: 50vw;
+        margin-top: 10vh;
     }
 }
 
