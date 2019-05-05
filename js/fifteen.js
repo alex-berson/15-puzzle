@@ -1,5 +1,6 @@
 let board = [];
 let firstInitialization = true;
+const slidingDuration = 150;
 const initializationDuration = 1000;
 const shufflingDuration = 1000;
 const zoomingDuration = 1000;
@@ -22,7 +23,6 @@ const isPuzzleSolvable = () => {
 
 const randomizeBoard = () => {
     board = Array.from({length: 15}, (_, i) => i+1);
-    
     do {
         board = board.map((a) => [Math.random(),a]).sort((a,b) => a[0]-b[0]).map((a) => a[1]);
         if (!isPuzzleSolvable()) [board[13], board[14]] = [board[14], board[13]];
@@ -60,12 +60,12 @@ const initializeBoard = () => {
     randomizeBoard();
     document.querySelectorAll('.tile').forEach(function(tile){
         let destinationTile = document.querySelectorAll('.tile')[board.indexOf(parseInt(tile.id.replace(/[^0-9]/g,'')))];
-        let offsetleft =  destinationTile.offsetLeft - tile.offsetLeft;
+        let offsetLeft =  destinationTile.offsetLeft - tile.offsetLeft;
         let offsetTop = destinationTile.offsetTop - tile.offsetTop;
         tile.style.pointerEvents = "none";
         if (firstInitialization) tile.addEventListener("click", function() {moveTiles(this.id)});
         tile.style.transition = `all ${shufflingDuration/1000}s ease-in-out`;
-        tile.style.transform = `translate(${offsetleft}px, ${offsetTop}px)`;
+        tile.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
     });
     firstInitialization = false;
     setTimeout(function() {document.querySelectorAll('.tile').forEach(function(tile, index){
@@ -113,53 +113,42 @@ const moveTiles = id => {
     });
    
     let emptyTileElement = document.querySelector('#tile16');
-    let position = 0;
-    let step = 4;
 
     const tileSize = Math.abs(movingTilesElements[0].offsetLeft - emptyTileElement.offsetLeft ||
         movingTilesElements[0].offsetTop - emptyTileElement.offsetTop);
 
-    let direction = '';
+    let offsetLeft = offsetTop = 0;
+    
     switch(emptyTilePosition - clickedTilePosition) {
         case 1: case 2: case 3:   
-            direction = 'left'; 
+            offsetLeft = tileSize; 
             break;
         case -1: case -2: case -3: 
-            direction = 'right'; 
+            offsetLeft = -tileSize;
             break;
         case 4: case 8: case 12:   
-            direction = 'top';
+            offsetTop = tileSize; 
             break;
-        case -4: case -8: case -12:   
-            direction = 'bottom'; 
+        case -4: case -8: case -12: 
+            offsetTop = -tileSize;   
             break;
         } 
 
-    let  slidingInterval = setInterval(sliding, 5);
-    
-    function sliding() {
-        if (position >= tileSize) {     
-            clearInterval(slidingInterval);
-            document.querySelectorAll('.tile').forEach(function(tile){
-                tile.removeAttribute("style");
-            });
-            movingTilesElements.forEach(function(tile){
-                emptyTileElement.textContent = tile.textContent;
-                emptyTileElement.id = tile.id;
-                tile.textContent = 16;
-                tile.id = "tile16";
-                emptyTileElement = document.querySelector('#tile16');  
-            });
-            if (isPuzzleSolved()) finalizeGame();
-        } else {
-            step = (position + step) > tileSize ? tileSize % step : step;
-            position += step;
+    movingTilesElements.forEach(function(tile){
+        tile.style.transition = `all ${slidingDuration/1000}s ease-in-out`;
+        tile.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
+    });
 
-            movingTilesElements.forEach(function(tile){
-                tile.style.setProperty(direction, position + 'px');
-            });
-        }
-    }
+    setTimeout(function() {
+        document.querySelectorAll('.tile').forEach(function(tile){
+            tile.removeAttribute("style")});
+        movingTilesElements.forEach(function(tile){
+            emptyTileElement.textContent = tile.textContent;
+            emptyTileElement.id = tile.id;
+            tile.textContent = 16;
+            tile.id = "tile16";
+            emptyTileElement = document.querySelector('#tile16')});
+        if (isPuzzleSolved()) finalizeGame()}, slidingDuration);
 }
 
 const finalizeGame = () => {
