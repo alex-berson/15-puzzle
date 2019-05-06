@@ -1,11 +1,11 @@
 @font-face {
-    font-family: 'Lora';
-    src: url(../fonts/Lora-Regular.ttf);
+    font-family: 'Roboto Slab';
+    src: url(../fonts/RobotoSlab-Regular.ttf);
 }
 
 @font-face {
-    font-family: 'Lora';
-    src: url(../fonts/Lora-Bold.ttf);
+    font-family: 'Roboto Slab';
+    src: url(../fonts/RobotoSlab-Bold.ttf);
     font-weight: bold;
 }
 
@@ -20,7 +20,7 @@
   }
 
 body{
-    font-family: Lora, serif;
+    font-family: 'Roboto Slab', serif;
     background: var(--sepia);
     margin: 0px;
 }
@@ -57,7 +57,7 @@ h1{
 .tile{
     font-weight: bold;
     color: var(--sepia);
-    padding: 4vw 3vw 3vw 3vw;
+    padding: 3.5vw 3vw 3vw 3vw;
     font-size: 10vw;
     text-align: center;
     margin: 1px;
@@ -70,7 +70,6 @@ h1{
     color: var(--sepia);
     font-size: 0.43em; 
     margin-top: -1.3em;
-
 }
 a{
     text-decoration: none;
@@ -117,7 +116,7 @@ a{
     .tile{
         margin: 2px;
         font-size: 40px;
-        padding: 22px 10px 10px 10px; 
+        padding: 21px 10px 10px 10px; 
     }
 
     #designed{
