@@ -5,10 +5,19 @@ const initializationDuration = 1000;
 const shufflingDuration = 1000;
 const zoomingDuration = 1000;
 const wakeUpDuration = 2000;
-const finalizationDuartion = zoomingDuration * 16;
+const finalizationDuartion = zoomingDuration * 16 + 100;
 const darkBrown = getComputedStyle(document.documentElement).getPropertyValue('--darkBrown');
 const boardSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--boardSize').replace(/[^0-9]/g,''))/100;
 document.documentElement.style.setProperty('--boardSize', 100/window.innerWidth * Math.ceil(window.innerWidth*boardSize/4)*4 + 'vw');
+
+// if ('serviceWorker' in navigator) {
+//     window.addEventListener('load', () => {
+//         navigator.serviceWorker.register('service-worker.js')
+//             .then((reg) => {
+//                 console.log('Service worker registered.', reg);
+//             });
+//     });
+// }
 
 const isPuzzleSolvable = () => {
     let numberOfInversions = 0;
@@ -27,7 +36,7 @@ const randomizeBoard = () => {
         board = board.map((a) => [Math.random(),a]).sort((a,b) => a[0]-b[0]).map((a) => a[1]);
         if (!isPuzzleSolvable()) [board[13], board[14]] = [board[14], board[13]];
     } while(board.some((item, index) => item == index + 1));
-    // board = [1,2,3,4,5,6,7,8,9,10,15,11,13,14,12];
+    //board = [1,2,3,4,5,6,7,8,9,10,15,11,13,14,12];
     board.push(16);
 }
 
@@ -170,7 +179,6 @@ const finalizeGame = () => {
                 document.querySelector(`#tile${tileNumber}`).classList.remove("zoom");
             }
             document.querySelector(`#tile${tileNumber+1}`).classList.add("zoom");
-            document.querySelector(`#tile${tileNumber+1}`).style.transition = `background ${wakeUpDuration/1000}s ease-in-out`;
             tileNumber++;
         }
     }
@@ -189,7 +197,9 @@ const finalizeGame = () => {
     browningTitle();
 
     setTimeout(function() {document.querySelectorAll('.tile').forEach(function(tile){
-        tile.style.pointerEvents = ""})}, finalizationDuartion);
+        tile.style.pointerEvents = ""; 
+        tile.style.transition = `background ${wakeUpDuration/1000}s ease-in-out`;})
+    }, finalizationDuartion);
 }
 
 window.onload = setTimeout(initializeBoard, initializationDuration);
