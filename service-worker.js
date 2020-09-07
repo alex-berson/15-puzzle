@@ -19,7 +19,7 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
-  evt.waitUntil(
+  event.waitUntil(
     caches.keys().then(keys => {
       return Promise.all(keys
         .filter(key => key !== cacheName)
