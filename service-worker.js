@@ -1,6 +1,6 @@
 const cacheName = 'cache-v1';
 const files = [
-  '/',
+  'https://alex-berson.github.io/15-puzzle/',
   'index.html',
   'css/style.css',
   'js/fifteen.js',
@@ -13,7 +13,7 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(cacheName)
       .then(cache => {
-        return cache.addAll(files);
+      cache.addAll(files);
       })
   );
 });
