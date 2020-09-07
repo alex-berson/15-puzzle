@@ -16,7 +16,7 @@ if (window.innerHeight > window.innerWidth) {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/service-worker.js')
+    navigator.serviceWorker.register('service-worker.js')
       .then(reg => {
         console.log('Service worker registered!', reg);
       })
