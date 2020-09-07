@@ -16,7 +16,7 @@
     --brown: #8C5C42;
     --beige: #C29F91;
     --black: #3B3B47;
-    --boardSize: 85vw;
+    --boardSize: 85vmin;
   }
 
 body{
@@ -57,8 +57,10 @@ h1{
 .tile{
     font-weight: bold;
     color: var(--sepia);
-    padding: 3.5vw 3vw 3vw 3vw;
-    font-size: 10vw;
+    /* padding: 3.5vw 3vw 3vw 3vw;
+    font-size: 10vw; */
+    padding: 3.5vmin 3vmin 3vmin 3vmin;
+    font-size: 10vmin;
     text-align: center;
     margin: 1px;
     border-radius: 7px;
@@ -101,17 +103,18 @@ a{
 }
 
 @media (orientation: landscape) and (max-height: 460px){
-    .tile{
+    /* .tile{
         padding: 3.5vh 3vh 3vh 3vh;
         font-size: 10vh;
-    } 
+    }  */
     h1{
         display: none;
     }
-    /* .board{
-        margin-top: 7.5vh;
-    } */
-
+}
+@media (orientation: landscape) and (max-height: 460px) and (display-mode: standalone) {
+    .board{
+        margin-top: 5vmin;
+    }
 }
 
  @media (min-width: 460px) and (min-height: 460px){
