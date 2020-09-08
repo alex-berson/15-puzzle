@@ -57,8 +57,6 @@ h1{
 .tile{
     font-weight: bold;
     color: var(--sepia);
-    /* padding: 3.5vw 3vw 3vw 3vw;
-    font-size: 10vw; */
     padding: 3.5vmin 3vmin 3vmin 3vmin;
     font-size: 10vmin;
     text-align: center;
@@ -103,21 +101,15 @@ a{
 }
 
 @media (orientation: landscape) and (max-height: 460px){
-    /* .tile{
-        padding: 3.5vh 3vh 3vh 3vh;
-        font-size: 10vh;
-    }  */
     h1{
         display: none;
     }
-}
-@media (orientation: landscape) and (max-height: 460px) and (display-mode: standalone) {
     .board{
         margin-top: 5vmin;
     }
 }
 
- @media (min-width: 460px) and (min-height: 460px){
+@media (min-width: 460px) and (min-height: 460px){
     h1{
         font-size: 6.4em;
     }
