@@ -1,7 +1,7 @@
 let board = [];
 let firstInitialization = true;
 const slidingDuration = 150;
-const initializationDuration = 1000;
+const initializationDuration = 3000;
 const shufflingDuration = 1000;
 const zoomingDuration = 1000;
 const wakeUpDuration = 2000;
@@ -44,7 +44,7 @@ const randomizeBoard = () => {
         board = board.map((a) => [Math.random(),a]).sort((a,b) => a[0]-b[0]).map((a) => a[1]);
         if (!isPuzzleSolvable()) [board[13], board[14]] = [board[14], board[13]];
     } while(board.some((item, index) => item == index + 1));
-    //board = [1,2,3,4,5,6,7,8,9,10,15,11,13,14,12];
+    // board = [1,2,3,4,5,6,7,8,9,10,15,11,13,14,12];
     board.push(16);
 }
 
@@ -211,10 +211,12 @@ const finalizeGame = () => {
 }
 window.onload = function() {
     document.fonts.ready.then(function() {
-        document.querySelector("body").style.visibility = "visible";
+        document.querySelector("body").style.transition = 'opacity 3s linear';
+        document.querySelector("body").style.opacity = 1;
+        
+        // document.querySelector("body").style.visibility = "visible";
         setTimeout(initializeBoard, initializationDuration);
     });
     
 };
-// window.onload = setTimeout(initializeBoard, initializationDuration);
 

@@ -23,8 +23,9 @@ body{
     font-family: 'Roboto Slab', serif;
     background: var(--sepia);
     margin: 0px;
+    /* visibility: hidden; */
 
-    visibility: hidden;
+    opacity: 0;
 }
 
 h1{
