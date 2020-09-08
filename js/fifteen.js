@@ -209,6 +209,12 @@ const finalizeGame = () => {
         tile.style.transition = `background ${wakeUpDuration/1000}s ease-in-out`;})
     }, finalizationDuartion);
 }
-
-window.onload = setTimeout(initializeBoard, initializationDuration);
+window.onload = function() {
+    document.fonts.ready.then(function() {
+        document.querySelector("body").style.visibility = "visible";
+        setTimeout(initializeBoard, initializationDuration);
+    });
+    
+};
+// window.onload = setTimeout(initializeBoard, initializationDuration);
 
