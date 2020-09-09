@@ -1,7 +1,7 @@
 let board = [];
 let firstInitialization = true;
 const slidingDuration = 150;
-const initializationDuration = 3000;
+const initializationDuration = 2000;
 const shufflingDuration = 1000;
 const zoomingDuration = 1000;
 const wakeUpDuration = 2000;
@@ -25,7 +25,6 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
-
 
 const isPuzzleSolvable = () => {
     let numberOfInversions = 0;
@@ -211,10 +210,8 @@ const finalizeGame = () => {
 }
 window.onload = function() {
     document.fonts.ready.then(function() {
-        document.querySelector("body").style.transition = 'opacity 3s linear';
+        document.querySelector("body").style.transition = 'opacity 2s ease';
         document.querySelector("body").style.opacity = 1;
-        
-        // document.querySelector("body").style.visibility = "visible";
         setTimeout(initializeBoard, initializationDuration);
     });
     

@@ -122,9 +122,6 @@ a{
     h1{
         display: none;
     }
-    /* .board{
-        margin-top: 5vmin;
-    } */
 }
 
 @media (min-width: 460px) and (min-height: 460px){
@@ -148,15 +145,9 @@ a{
 
     #designed{
         font-size: 0.85em; 
-        margin-top: -1.35em;
+        margin-top: -1.4em;
     }
 }
-
-/* @media (orientation: portrait) and (max-width: 460px){
-    .board{
-        margin-top: 10vh;
-    }
-} */
 
 #tile1, #tile7, #tile12, #tile14{
     background: var(--brown);
