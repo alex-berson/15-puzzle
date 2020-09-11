@@ -11,13 +11,13 @@
 
 :root {
     --sepia: #FBF0D9;
-    --darkBrown: #5F4B32;
+    --darkBrown: #553311;
     --red: #523436;
     --brown: #8C5C42;
     --beige: #C29F91;
     --black: #3B3B47;
     --boardSize: 85vmin;
-  }
+}
 
 body{
     font-family: 'Roboto Slab', serif;
