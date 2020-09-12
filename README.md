@@ -1,7 +1,8 @@
 # 15 Puzzle
 
 Arrange tiles in numerical sequence using the extra space in the grid to slide the tiles.
-You can try to solve [15 puzzle online](https://alex-berson.github.io/15-puzzle/).
+You can try to solve [15 puzzle online](https://alex-berson.github.io/15-puzzle/) or <br>
+[<img src="images/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg">](https://apps.apple.com/us/app/fifteen-puzzle/id1531453462)
 
 ## Description
 
