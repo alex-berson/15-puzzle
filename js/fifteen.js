@@ -210,6 +210,12 @@ const finalizeGame = () => {
 }
 window.onload = function() {
     document.fonts.ready.then(function() {
+        
+        function preventDefault(e){
+            e.preventDefault();
+        }
+        
+        document.body.addEventListener('touchmove', preventDefault, { passive: false });
         document.querySelector("body").style.transition = 'opacity 2s ease';
         document.querySelector("body").style.opacity = 1;
         setTimeout(initializeBoard, initializationDuration);
