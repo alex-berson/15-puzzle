@@ -8,6 +8,7 @@ const wakeUpDuration = 2000;
 const finalizationDuartion = zoomingDuration * 16 + 100;
 const darkBrown = getComputedStyle(document.documentElement).getPropertyValue('--darkBrown');
 const boardSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--boardSize').replace(/[^0-9]/g,''))/100;
+
 if (window.innerHeight > window.innerWidth) {
     document.documentElement.style.setProperty('--boardSize', 100/window.innerWidth * Math.ceil(window.innerWidth*boardSize/4)*4 + 'vmin');
 } else {
@@ -79,7 +80,10 @@ const initializeBoard = () => {
         let offsetLeft =  destinationTile.offsetLeft - tile.offsetLeft;
         let offsetTop = destinationTile.offsetTop - tile.offsetTop;
         tile.style.pointerEvents = "none";
-        if (firstInitialization) tile.addEventListener("click", function() {moveTiles(this.id)});
+        if (firstInitialization) {
+            tile.addEventListener("touchstart", function() {moveTiles(this.id)});
+            tile.addEventListener("mousedown", function() {moveTiles(this.id)});
+        }
         tile.style.transition = `all ${shufflingDuration/1000}s ease-in-out`;
         tile.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
     });
