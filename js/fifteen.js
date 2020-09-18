@@ -124,6 +124,7 @@ const moveTiles = id => {
     if (movingTilesPositions.length == 0) return;
     document.querySelectorAll('.tile').forEach(function(tile){
         tile.style.pointerEvents = "none";
+        tile.style.transition = `all ${slidingDuration/1000}s ease-in-out`;
     });
 
     let movingTilesElements = [];
@@ -155,7 +156,6 @@ const moveTiles = id => {
         } 
 
     movingTilesElements.forEach(function(tile){
-        tile.style.transition = `all ${slidingDuration/1000}s ease-in-out`;
         tile.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
     });
 

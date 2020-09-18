@@ -114,8 +114,8 @@ a{
 
 .zoom{
     z-index: 100;
-    animation: scaling 1s ease-in-out forwards,
-               coloring 0.5s 0.5s ease-in-out forwards;
+    animation: scaling 1s linear forwards,
+               coloring 0.5s 0.5s linear forwards;
 }
 
 @media (orientation: landscape) and (max-height: 460px){
