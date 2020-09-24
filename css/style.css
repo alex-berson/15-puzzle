@@ -10,12 +10,22 @@
 }
 
 :root {
-    --sepia: #FBF0D9;
+    --sepia: #ffffff;
+    --darkBrown: #973999;
+    --red: #0038b8;
+    --brown: #ef4135;
+    --beige: #008c45;
+    --black: #ffcc00;
+
+    /* --sepia: #FBF0D9;
     --darkBrown: #553311;
     --red: #523436;
     --brown: #8C5C42;
     --beige: #C29F91;
-    --black: #3B3B47;
+    --black: #3B3B47; */
+
+
+
     --boardSize: 85vmin;
 }
 
@@ -50,7 +60,7 @@ h1{
     margin-top: 0px;
 }
 
-#char1, #char6, #char10{
+/* #char1, #char6, #char10{
     color: var(--red);
 }
 #char2, #char5, #char11{
@@ -61,7 +71,21 @@ h1{
 }
 #char3, #char8, #char13{
     color: var(--black);
+} */
+
+#char1, #char6, #char10{
+    color: var(--red);
 }
+#char2, #char5, #char11{
+    color: var(--brown);
+}
+#char3, #char7, #char9, #char12{
+    color: var(--beige);
+}
+#char4, #char8, #char13{
+    color: var(--black);
+}
+
 .board{
     display: grid;
     grid-template-columns: repeat(4, minmax(25%, 1fr));
