@@ -16,7 +16,7 @@ if (window.innerHeight > window.innerWidth) {
 }
 
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
+  window.addEventListener('load', () => {
     navigator.serviceWorker.register('service-worker.js')
       .then(reg => {
         console.log('Service worker registered!', reg);
@@ -45,6 +45,7 @@ const randomizeBoard = () => {
         if (!isPuzzleSolvable()) [board[13], board[14]] = [board[14], board[13]];
     } while(board.some((item, index) => item == index + 1));
     // board = [1,2,3,4,5,6,7,8,9,10,15,11,13,14,12];
+
     board.push(16);
 }
 
@@ -73,22 +74,37 @@ const isPuzzleSolved = () => {
     return board.every((val, i, arr) => !i || (val >= arr[i - 1]));
 }
 
+const iPhoneXApp = () => {
+    if ((document.URL.indexOf('http://') == -1 && document.URL.indexOf('https://') == -1) && 
+        (screen.width < 460 || screen.height < 460) && 
+        (screen.width/screen.height < 0.5 && screen.height/screen.width > 2)) {
+            return true;
+    } 
+    return false;
+}
+
 const initializeBoard = () => {
     randomizeBoard();
-    document.querySelectorAll('.tile').forEach(function(tile){
+
+    document.querySelectorAll('.tile').forEach((tile) => {
+        tile.style.transition = `all ${shufflingDuration/1000}s ease-in-out`;
+    });
+    document.querySelectorAll('.tile').forEach((tile) => {
         let destinationTile = document.querySelectorAll('.tile')[board.indexOf(parseInt(tile.id.replace(/[^0-9]/g,'')))];
         let offsetLeft =  destinationTile.offsetLeft - tile.offsetLeft;
         let offsetTop = destinationTile.offsetTop - tile.offsetTop;
         tile.style.pointerEvents = "none";
         if (firstInitialization) {
-            tile.addEventListener("touchstart", function() {moveTiles(this.id)});
-            tile.addEventListener("mousedown", function() {moveTiles(this.id)});
+                if (matchMedia('(hover: none)').matches){
+                    tile.addEventListener("touchstart", moveTiles);
+                } else {
+                    tile.addEventListener("mousedown", moveTiles);
+                }
         }
-        tile.style.transition = `all ${shufflingDuration/1000}s ease-in-out`;
         tile.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
     });
     firstInitialization = false;
-    setTimeout(function() {document.querySelectorAll('.tile').forEach(function(tile, index){
+    setTimeout(() => {document.querySelectorAll('.tile').forEach((tile, index) => {
         tile.textContent = board[index];
         tile.id = `tile${board[index]}`;
         tile.style.pointerEvents = "";
@@ -96,40 +112,42 @@ const initializeBoard = () => {
 }
 
 const wakeUp = () => {
-    document.querySelectorAll('.tile').forEach(function(tile){
+
+    document.querySelectorAll('.tile').forEach((tile) => {
         tile.style.pointerEvents = "none";
         tile.style.background = "";
     });
-    document.querySelectorAll('span').forEach(function(char){
+    document.querySelectorAll('span').forEach((char) => {
         char.style.color = "";
     });
-    setTimeout(function() {
-        document.querySelectorAll('.tile').forEach(function(tile){
+    setTimeout(() => {
+        document.querySelectorAll('.tile').forEach((tile) => {
         tile.removeAttribute("style")});
-        document.querySelectorAll('span').forEach(function(char){
+        document.querySelectorAll('span').forEach((char) => {
         char.removeAttribute("style")});
         initializeBoard()}, wakeUpDuration);
 }
 
-const moveTiles = id => {
+const moveTiles = (e) => {
 
     if (isPuzzleSolved()){
         wakeUp();
         return;
     }
+    let id = e.currentTarget.id;
     let clickedTilePosition = board.indexOf(parseInt(id.replace(/[^0-9]/g,'')));
     let emptyTilePosition = board.indexOf(16);
     let movingTilesPositions = getMovingTiles(emptyTilePosition, clickedTilePosition);
 
     if (movingTilesPositions.length == 0) return;
-    document.querySelectorAll('.tile').forEach(function(tile){
+    document.querySelectorAll('.tile').forEach((tile) => {
         tile.style.pointerEvents = "none";
         tile.style.transition = `all ${slidingDuration/1000}s ease-in-out`;
     });
 
     let movingTilesElements = [];
 
-    movingTilesPositions.forEach(function(tile, index){
+    movingTilesPositions.forEach((tile, index) => {
         movingTilesElements[index] = document.querySelector(`#tile${tile}`);
     });
    
@@ -155,14 +173,14 @@ const moveTiles = id => {
             break;
         } 
 
-    movingTilesElements.forEach(function(tile){
+    movingTilesElements.forEach((tile) => {
         tile.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
     });
 
-    setTimeout(function() {
-        document.querySelectorAll('.tile').forEach(function(tile){
+    setTimeout(() => {
+        document.querySelectorAll('.tile').forEach((tile) => {
             tile.removeAttribute("style")});
-        movingTilesElements.forEach(function(tile){
+        movingTilesElements.forEach((tile) => {
             emptyTileElement.textContent = tile.textContent;
             emptyTileElement.id = tile.id;
             tile.textContent = 16;
@@ -173,13 +191,13 @@ const moveTiles = id => {
 
 const finalizeGame = () => {
     const titleLength = document.querySelectorAll('h1 span').length;
-    document.querySelectorAll('.tile').forEach(function(tile){
+    document.querySelectorAll('.tile').forEach((tile) => {
         tile.style.pointerEvents = "none";
     });
 
-    let  zoomingInterval = setInterval(zooming, zoomingDuration);
+
     let tileNumber = 0;
-    function zooming(){
+    const zooming = () => {
         if (tileNumber == 15){
             document.querySelector(`#tile${tileNumber}`).style.background = darkBrown;
             document.querySelector('#tile15').classList.remove("zoom");
@@ -193,9 +211,11 @@ const finalizeGame = () => {
             tileNumber++;
         }
     }
+    
+    let  zoomingInterval = setInterval(zooming, zoomingDuration);
 
     let charNumber = 1;
-    function browningTitle(){
+    const browningTitle = () => {
         if (charNumber > titleLength){
             return;
         } else {
@@ -207,18 +227,19 @@ const finalizeGame = () => {
     }
     browningTitle();
 
-    setTimeout(function() {document.querySelectorAll('.tile').forEach(function(tile){
+    setTimeout(() => {document.querySelectorAll('.tile').forEach((tile) => {
         tile.style.pointerEvents = ""; 
         tile.style.transition = `background ${wakeUpDuration/1000}s ease-in-out`;})
     }, finalizationDuartion);
 }
-window.onload = function() {
-    document.fonts.ready.then(function() {
-        
-        function preventDefault(e){
-            e.preventDefault();
+window.onload = () => {
+    document.fonts.ready.then(() => {
+        if (iPhoneXApp()) {
+            document.querySelector("h1").style.marginTop = "-25px";
+            document.querySelector("#designed").style.marginBottom = "-25px";
         }
         
+        const preventDefault = (e) => e.preventDefault();
         document.body.addEventListener('touchmove', preventDefault, { passive: false });
         document.querySelector("body").style.transition = 'opacity 2s ease';
         document.querySelector("body").style.opacity = 1;
