@@ -1,5 +1,4 @@
 let board = [];
-let firstInitialization = true;
 const slidingDuration = 150;
 const initializationDuration = 2000;
 const shufflingDuration = 1000;
@@ -44,7 +43,6 @@ const randomizeBoard = () => {
         board = board.map((a) => [Math.random(),a]).sort((a,b) => a[0]-b[0]).map((a) => a[1]);
         if (!isPuzzleSolvable()) [board[13], board[14]] = [board[14], board[13]];
     } while(board.some((item, index) => item == index + 1));
-    // board = [1,2,3,4,5,6,7,8,9,10,15,11,13,14,12];
 
     board.push(16);
 }
@@ -83,7 +81,30 @@ const iPhoneXApp = () => {
     return false;
 }
 
+const enableTouch = () => {
+    document.querySelectorAll('.tile').forEach((tile) => {
+
+        if (matchMedia('(hover: none)').matches){
+            tile.addEventListener("touchstart", moveTiles);
+        } else {
+            tile.addEventListener("mousedown", moveTiles);
+        }
+    });
+}
+
+const disableTouch = () => {
+    document.querySelectorAll('.tile').forEach((tile) => {
+
+        if (matchMedia('(hover: none)').matches){
+            tile.removeEventListener("touchstart", moveTiles);
+        } else {
+            tile.removeEventListener("mousedown", moveTiles);
+        }
+    });
+}
+
 const initializeBoard = () => {
+
     randomizeBoard();
 
     document.querySelectorAll('.tile').forEach((tile) => {
@@ -93,28 +114,20 @@ const initializeBoard = () => {
         let destinationTile = document.querySelectorAll('.tile')[board.indexOf(parseInt(tile.id.replace(/[^0-9]/g,'')))];
         let offsetLeft =  destinationTile.offsetLeft - tile.offsetLeft;
         let offsetTop = destinationTile.offsetTop - tile.offsetTop;
-        tile.style.pointerEvents = "none";
-        if (firstInitialization) {
-                if (matchMedia('(hover: none)').matches){
-                    tile.addEventListener("touchstart", moveTiles);
-                } else {
-                    tile.addEventListener("mousedown", moveTiles);
-                }
-        }
         tile.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
     });
-    firstInitialization = false;
     setTimeout(() => {document.querySelectorAll('.tile').forEach((tile, index) => {
         tile.textContent = board[index];
         tile.id = `tile${board[index]}`;
-        tile.style.pointerEvents = "";
-        tile.removeAttribute("style")})}, shufflingDuration);
+        tile.removeAttribute("style")});
+        enableTouch()}, shufflingDuration);
 }
 
 const wakeUp = () => {
 
+    disableTouch();
+
     document.querySelectorAll('.tile').forEach((tile) => {
-        tile.style.pointerEvents = "none";
         tile.style.background = "";
     });
     document.querySelectorAll('span').forEach((char) => {
@@ -140,8 +153,10 @@ const moveTiles = (e) => {
     let movingTilesPositions = getMovingTiles(emptyTilePosition, clickedTilePosition);
 
     if (movingTilesPositions.length == 0) return;
+
+    disableTouch();
+
     document.querySelectorAll('.tile').forEach((tile) => {
-        tile.style.pointerEvents = "none";
         tile.style.transition = `all ${slidingDuration/1000}s ease-in-out`;
     });
 
@@ -178,6 +193,7 @@ const moveTiles = (e) => {
     });
 
     setTimeout(() => {
+        enableTouch()
         document.querySelectorAll('.tile').forEach((tile) => {
             tile.removeAttribute("style")});
         movingTilesElements.forEach((tile) => {
@@ -191,11 +207,7 @@ const moveTiles = (e) => {
 
 const finalizeGame = () => {
     const titleLength = document.querySelectorAll('h1 span').length;
-    document.querySelectorAll('.tile').forEach((tile) => {
-        tile.style.pointerEvents = "none";
-    });
-
-
+    disableTouch();
     let tileNumber = 0;
     const zooming = () => {
         if (tileNumber == 15){
@@ -228,9 +240,8 @@ const finalizeGame = () => {
     browningTitle();
 
     setTimeout(() => {document.querySelectorAll('.tile').forEach((tile) => {
-        tile.style.pointerEvents = ""; 
-        tile.style.transition = `background ${wakeUpDuration/1000}s ease-in-out`;})
-    }, finalizationDuartion);
+        tile.style.transition = `background ${wakeUpDuration/1000}s ease-in-out`});
+        enableTouch()}, finalizationDuartion);
 }
 window.onload = () => {
     document.fonts.ready.then(() => {
@@ -244,7 +255,5 @@ window.onload = () => {
         document.querySelector("body").style.transition = 'opacity 2s ease';
         document.querySelector("body").style.opacity = 1;
         setTimeout(initializeBoard, initializationDuration);
-    });
-    
+    }); 
 };
-
