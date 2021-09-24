@@ -251,7 +251,7 @@ window.onload = () => {
         }
         
         const preventDefault = (e) => e.preventDefault();
-        document.body.addEventListener('touchmove', preventDefault, { passive: false });
+        document.body.addEventListener('touchstart', preventDefault, { passive: false });
         document.querySelector("body").style.transition = 'opacity 2s ease';
         document.querySelector("body").style.opacity = 1;
         setTimeout(initializeBoard, initializationDuration);
