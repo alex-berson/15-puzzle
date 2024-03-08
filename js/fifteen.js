@@ -1,259 +1,268 @@
 let board = [];
-const slidingDuration = 150;
-const initializationDuration = 2000;
-const shufflingDuration = 1000;
-const zoomingDuration = 1000;
-const wakeUpDuration = 2000;
-const finalizationDuartion = zoomingDuration * 16 + 100;
-const darkBrown = getComputedStyle(document.documentElement).getPropertyValue('--darkBrown');
-const boardSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--boardSize').replace(/[^0-9]/g,''))/100;
 
-if (window.innerHeight > window.innerWidth) {
-    document.documentElement.style.setProperty('--boardSize', 100/window.innerWidth * Math.ceil(window.innerWidth*boardSize/4)*4 + 'vmin');
-} else {
-    document.documentElement.style.setProperty('--boardSize', 100/window.innerHeight * Math.ceil(window.innerHeight*boardSize/4)*4 + 'vmin');
+const showBoard = () => document.body.style.opacity = 1;
+                          
+const setBoardSize = () => {
+
+    let minSide = screen.height > screen.width ? screen.width : window.innerHeight;
+    let cssBoardSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--board-size')) / 100;
+    let boardSize = Math.ceil(minSide * cssBoardSize / 4) * 4;
+
+    document.documentElement.style.setProperty('--board-size', boardSize + 'px');
 }
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('service-worker.js')
-      .then(reg => {
-        console.log('Service worker registered!', reg);
-      })
-      .catch(err => {
-        console.log('Service worker registration failed: ', err);
-      });
-  });
-}
+const puzzleSolved = () => {
 
-const isPuzzleSolvable = () => {
-    let numberOfInversions = 0;
-    for (i = 0; i < board.length-1; i++){
-        for (j = i+1; j < board.length; j++){
-            if (board[i] > board[j]) numberOfInversions++;
-        }
+    for (let i = 0; i < board.length - 1; i++) {
+        if (board[i] != i + 1) return false;
     }
-    if (numberOfInversions % 2) return false;    
+    
     return true;
 }
 
-const randomizeBoard = () => {
-    board = Array.from({length: 15}, (_, i) => i+1);
-    do {
-        board = board.map((a) => [Math.random(),a]).sort((a,b) => a[0]-b[0]).map((a) => a[1]);
-        if (!isPuzzleSolvable()) [board[13], board[14]] = [board[14], board[13]];
-    } while(board.some((item, index) => item == index + 1));
+const shuffle = (array) => {
 
-    board.push(16);
-}
+    for (let i = array.length - 1; i > 0; i--) {
 
-const getMovingTiles = (emptyTilePosition, clickedTilePosition) => {
-    let movingTiles = [];
-    const span =  clickedTilePosition - emptyTilePosition;
-    
-    switch (Math.abs(span)) {
-        
-        case 1: case 2: case 3: case 4: case 8: case 12:
-            
-            if (Math.min(clickedTilePosition, emptyTilePosition) % 4 > Math.max(clickedTilePosition, emptyTilePosition) % 4) break; 
-            const numberOfTiles = Math.abs(span) <= 3 ? Math.abs(span) : Math.abs(span/4);
+        let j = Math.floor(Math.random() * (i + 1));
 
-            for (i = numberOfTiles; i >= 1; i--){
-                nextTileMoving = emptyTilePosition  + span/numberOfTiles;
-                movingTiles.push(board[nextTileMoving]);
-                [board[emptyTilePosition], board[nextTileMoving]] = [board[nextTileMoving], board[emptyTilePosition]];
-                emptyTilePosition = nextTileMoving;
-            }
+        [array[i], array[j]] = [array[j], array[i]]; 
     }
-    return movingTiles;
 }
 
-const isPuzzleSolved = () => { 
-    return board.every((val, i, arr) => !i || (val >= arr[i - 1]));
+const puzzleSolvable = () => {
+
+    let inversions = 0;
+
+    for (let i = 0; i < board.length - 1; i++){
+        for (let j = i + 1; j < board.length; j++){
+            if (board[i] > board[j]) inversions++;
+        }
+    }
+
+    return !(inversions % 2);    
 }
 
-const iPhoneXApp = () => {
-    if ((document.URL.indexOf('http://') == -1 && document.URL.indexOf('https://') == -1) && 
-        (screen.width < 460 || screen.height < 460) && 
-        (screen.width/screen.height < 0.5 && screen.height/screen.width > 2)) {
-            return true;
-    } 
-    return false;
+const randomizeBoard = () => {
+
+    board = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+
+    do {
+        shuffle(board);
+
+        if (!puzzleSolvable()) [board[0], board[1]] = [board[1], board[0]];
+
+    } while (board.some((item, i) => item == i + 1));
+
+    board.push(0);
+}
+
+const fillBoard = () => {
+
+    let cells = document.querySelectorAll('.cell');
+    let tiles = document.querySelectorAll('.tile');
+
+    for (let i = 0; i < tiles.length; i++) {
+
+        let rectTile = tiles[i].getBoundingClientRect();
+        let rectCell = cells[i].getBoundingClientRect();
+        let offsetLeft =  rectCell.left - rectTile.left;
+        let offsetTop =  rectCell.top - rectTile.top;
+        
+        tiles[i].style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
+    }
+}
+
+const shuffleTiles = () => {
+
+    let n = 0;
+    let cells = document.querySelectorAll('.cell');
+    let tiles = document.querySelectorAll('.tile');
+    
+    randomizeBoard();
+
+    for (let i = 0; i < 15; i++) {
+
+        let val = Number(tiles[i].id.substring(1));
+        let pos = board.indexOf(val);
+        let rectTile = tiles[i].getBoundingClientRect();
+        let rectCell = cells[pos].getBoundingClientRect();
+        let offsetLeft =  rectCell.left - rectTile.left;
+        let offsetTop =  rectCell.top - rectTile.top;
+        let style = window.getComputedStyle(tiles[i]);
+        let matrix = new DOMMatrix(style.transform);
+        
+        tiles[i].classList.add('shuffle');
+        tiles[i].style.transform = `translate(${matrix.m41 + offsetLeft}px, ${matrix.m42 + offsetTop}px)`;
+
+        tiles[i].addEventListener('transitionend', e => {
+
+            let tile = e.currentTarget;
+
+            tile.classList.remove('shuffle');
+
+            n++;
+
+            if (n >= 15) enableTouch();
+
+        }, {once: true});
+    }
+}
+
+const moveTles = (e) => {
+
+    let tile = e.currentTarget;
+    let pos0 = board.indexOf(0);
+    let val = Number(tile.id.substring(1));
+    let pos1 = board.indexOf(val);
+    let span =  pos1 - pos0;
+    let spans = [1,2,3,4,8,12]; 
+    let cells = document.querySelectorAll('.cell');
+    let tiles = document.querySelectorAll('.tile');
+
+    if (!spans.includes(Math.abs(span))) return;
+    if (Math.min(pos0, pos1) % 4 > Math.max(pos0, pos1) % 4) return; 
+   
+    let nTiles = Math.abs(span) <= 3 ? Math.abs(span) : Math.abs(span / 4);
+
+    for (let i = nTiles; i >= 1; i--) {
+
+        let pos = pos0 + span / nTiles * i;
+        let val = board[pos];
+
+        if (tiles[val - 1].classList.contains('move')) return;
+    }
+
+    for (let i = nTiles; i >= 1; i--) {
+
+        let pos = pos0 + span / nTiles;
+        let val = board[pos];
+        let rectTile = tiles[val - 1].getBoundingClientRect();
+        let rectCell = cells[pos0].getBoundingClientRect();
+        let offsetLeft =  rectCell.left - rectTile.left;
+        let offsetTop =  rectCell.top - rectTile.top;
+        let style = window.getComputedStyle(tiles[val - 1]);
+        let matrix = new DOMMatrix(style.transform);
+
+        tiles[val - 1].classList.add('move');
+        tiles[val - 1].style.transition = 'transform 0.15s ease-in-out';
+        tiles[val - 1].style.transform = `translate(${matrix.m41 + offsetLeft}px, ${matrix.m42 + offsetTop}px)`;
+
+        tiles[val - 1].addEventListener('transitionend', e => {
+
+            let tile = e.currentTarget;
+
+            tile.classList.remove('move');
+            tile.style.removeProperty('transition');
+
+        }, {once: true});
+
+        [board[pos0], board[pos]] = [board[pos], board[pos0]];    
+        pos0 = pos;
+    }
+
+    if (puzzleSolved()) firework();
+}
+
+const newGame = () => {
+
+    let tiles = document.querySelectorAll('.tile');
+    let chars = document.querySelectorAll('.char');
+
+    document.querySelector('.board').removeEventListener('touchstart', newGame);
+    document.querySelector('.board').removeEventListener('mousedown', newGame);
+
+    chars.forEach(char => char.classList.remove('brown-c'));
+    tiles.forEach(tile => tile.classList.remove('zoom', 'brown-t'));
+
+    setTimeout(shuffleTiles, 2000);
+}
+
+const firework = () => {
+
+    let n = 0;
+    let tiles = document.querySelectorAll('.tile');
+    let chars = document.querySelectorAll('.char');
+
+    disableTouch();
+
+    const zoom = () => {
+
+        if (n % 2 == 0) chars[n / 2].classList.add('brown-c');
+
+        tiles[n].classList.add('zoom');
+        tiles[n].style.transform += 'scale(1.5)';
+
+        tiles[n].addEventListener('transitionend', e => {
+
+            let tile = e.currentTarget;
+
+            tile.classList.add('brown-t');
+            tile.style.transform = tile.style.transform.replace('scale(1.5)', '');
+
+            tile.addEventListener('transitionend', () => {
+
+                if (n == 15) {
+                    
+                    document.querySelector('.board').addEventListener('touchstart', newGame);
+                    document.querySelector('.board').addEventListener('mousedown', newGame);
+
+                    return;
+                }
+
+                zoom();
+    
+            }, {once: true});
+
+        }, {once: true});
+
+        n++;
+    }
+
+    setTimeout(zoom, 1000);
 }
 
 const enableTouch = () => {
-    document.querySelectorAll('.tile').forEach((tile) => {
 
-        if (matchMedia('(hover: none)').matches){
-            tile.addEventListener("touchstart", moveTiles);
-        } else {
-            tile.addEventListener("mousedown", moveTiles);
-        }
+    let tiles = document.querySelectorAll('.tile');
+
+    tiles.forEach(tile => {
+        tile.addEventListener('touchstart', moveTles);
+        tile.addEventListener('mousedown', moveTles);
     });
 }
 
 const disableTouch = () => {
-    document.querySelectorAll('.tile').forEach((tile) => {
 
-        if (matchMedia('(hover: none)').matches){
-            tile.removeEventListener("touchstart", moveTiles);
-        } else {
-            tile.removeEventListener("mousedown", moveTiles);
-        }
+    let tiles = document.querySelectorAll('.tile');
+
+    tiles.forEach(tile => {
+        tile.removeEventListener('touchstart', moveTles);
+        tile.removeEventListener('mousedown', moveTles);
     });
 }
 
-const initializeBoard = () => {
+const disableTapZoom = () => {
 
-    randomizeBoard();
+    const preventDefault = (e) => {e.preventDefault()};
 
-    document.querySelectorAll('.tile').forEach((tile) => {
-        tile.style.transition = `all ${shufflingDuration/1000}s ease-in-out`;
-    });
-    document.querySelectorAll('.tile').forEach((tile) => {
-        let destinationTile = document.querySelectorAll('.tile')[board.indexOf(parseInt(tile.id.replace(/[^0-9]/g,'')))];
-        let offsetLeft =  destinationTile.offsetLeft - tile.offsetLeft;
-        let offsetTop = destinationTile.offsetTop - tile.offsetTop;
-        tile.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
-    });
-    setTimeout(() => {document.querySelectorAll('.tile').forEach((tile, index) => {
-        tile.textContent = board[index];
-        tile.id = `tile${board[index]}`;
-        tile.removeAttribute("style")});
-        enableTouch()}, shufflingDuration);
+    document.body.addEventListener('touchstart', preventDefault, {passive: false});
+    document.body.addEventListener('mousedown', preventDefault, {passive: false});
 }
 
-const wakeUp = () => {
-
-    disableTouch();
-
-    document.querySelectorAll('.tile').forEach((tile) => {
-        tile.style.background = "";
-    });
-    document.querySelectorAll('span').forEach((char) => {
-        char.style.color = "";
-    });
-    setTimeout(() => {
-        document.querySelectorAll('.tile').forEach((tile) => {
-        tile.removeAttribute("style")});
-        document.querySelectorAll('span').forEach((char) => {
-        char.removeAttribute("style")});
-        initializeBoard()}, wakeUpDuration);
+const registerServiceWorker = () => {
+   if ('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js');
 }
 
-const moveTiles = (e) => {
+const init = () => {
 
-    if (isPuzzleSolved()){
-        wakeUp();
-        return;
-    }
-    let id = e.currentTarget.id;
-    let clickedTilePosition = board.indexOf(parseInt(id.replace(/[^0-9]/g,'')));
-    let emptyTilePosition = board.indexOf(16);
-    let movingTilesPositions = getMovingTiles(emptyTilePosition, clickedTilePosition);
+    registerServiceWorker();
+    disableTapZoom(); 
+    setBoardSize();
+    fillBoard();  
+    showBoard();
 
-    if (movingTilesPositions.length == 0) return;
-
-    disableTouch();
-
-    document.querySelectorAll('.tile').forEach((tile) => {
-        tile.style.transition = `all ${slidingDuration/1000}s ease-in-out`;
-    });
-
-    let movingTilesElements = [];
-
-    movingTilesPositions.forEach((tile, index) => {
-        movingTilesElements[index] = document.querySelector(`#tile${tile}`);
-    });
-   
-    let emptyTileElement = document.querySelector('#tile16');
-
-    const tileSize = Math.abs(movingTilesElements[0].offsetLeft - emptyTileElement.offsetLeft ||
-        movingTilesElements[0].offsetTop - emptyTileElement.offsetTop);
-
-    let offsetLeft = offsetTop = 0;
-    
-    switch(emptyTilePosition - clickedTilePosition) {
-        case 1: case 2: case 3:   
-            offsetLeft = tileSize; 
-            break;
-        case -1: case -2: case -3: 
-            offsetLeft = -tileSize;
-            break;
-        case 4: case 8: case 12:   
-            offsetTop = tileSize; 
-            break;
-        case -4: case -8: case -12: 
-            offsetTop = -tileSize;   
-            break;
-        } 
-
-    movingTilesElements.forEach((tile) => {
-        tile.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
-    });
-
-    setTimeout(() => {
-        enableTouch()
-        document.querySelectorAll('.tile').forEach((tile) => {
-            tile.removeAttribute("style")});
-        movingTilesElements.forEach((tile) => {
-            emptyTileElement.textContent = tile.textContent;
-            emptyTileElement.id = tile.id;
-            tile.textContent = 16;
-            tile.id = "tile16";
-            emptyTileElement = document.querySelector('#tile16')});
-        if (isPuzzleSolved()) finalizeGame()}, slidingDuration);
+    setTimeout(shuffleTiles, 2000);
 }
 
-const finalizeGame = () => {
-    const titleLength = document.querySelectorAll('h1 span').length;
-    disableTouch();
-    let tileNumber = 0;
-    const zooming = () => {
-        if (tileNumber == 15){
-            document.querySelector(`#tile${tileNumber}`).style.background = darkBrown;
-            document.querySelector('#tile15').classList.remove("zoom");
-            clearInterval(zoomingInterval);
-        } else {
-            if (tileNumber) {
-                document.querySelector(`#tile${tileNumber}`).style.background = darkBrown;
-                document.querySelector(`#tile${tileNumber}`).classList.remove("zoom");
-            }
-            document.querySelector(`#tile${tileNumber+1}`).classList.add("zoom");
-            tileNumber++;
-        }
-    }
-    
-    let  zoomingInterval = setInterval(zooming, zoomingDuration);
-
-    let charNumber = 1;
-    const browningTitle = () => {
-        if (charNumber > titleLength){
-            return;
-        } else {
-            document.querySelector(`#char${charNumber}`).style.transition = `color ${16*zoomingDuration/titleLength/1000}s ease-in-out`;
-            document.querySelector(`#char${charNumber}`).style.color = darkBrown;
-            charNumber++;
-        }
-        setTimeout(browningTitle, 16*zoomingDuration/titleLength);
-    }
-    browningTitle();
-
-    setTimeout(() => {document.querySelectorAll('.tile').forEach((tile) => {
-        tile.style.transition = `background ${wakeUpDuration/1000}s ease-in-out`});
-        enableTouch()}, finalizationDuartion);
-}
-window.onload = () => {
-    document.fonts.ready.then(() => {
-        if (iPhoneXApp()) {
-            document.querySelector("h1").style.marginTop = "-25px";
-            document.querySelector("#designed").style.marginBottom = "-25px";
-        }
-        
-        const preventDefault = (e) => e.preventDefault();
-        document.body.addEventListener('touchstart', preventDefault, { passive: false });
-        document.querySelector("body").style.transition = 'opacity 2s ease';
-        document.querySelector("body").style.opacity = 1;
-        setTimeout(initializeBoard, initializationDuration);
-    }); 
-};
+window.onload = () => document.fonts.ready.then(init);

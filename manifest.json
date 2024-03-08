@@ -3,8 +3,7 @@
    "short_name": "15 Puzzle",
    "start_url": "index.html",
    "display": "standalone",
-   "background_color": "#FBF0D9",
-   "theme_color": "#FBF0D9",
+   "orientation":  "portrait",
    "icons": [{
       "src": "images/android-chrome-192x192.png",
       "sizes": "192x192",

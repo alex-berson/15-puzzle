@@ -1,15 +1,14 @@
-const cacheName = 'cache-v1';
+const cacheName = 'cache-v2';
 const files = [
-  'https://alex-berson.github.io/15-puzzle/',
+  '/',
   'index.html',
   'css/style.css',
   'js/fifteen.js',
-  'fonts/RobotoSlab-Regular-webfont.woff',
-  'fonts/RobotoSlab-Bold-webfont.woff'
+  'fonts/RobotoSlab-Regular.woff',
+  'fonts/RobotoSlab-Bold.woff'
 ];
 
 self.addEventListener('install', event => {
-  console.log('Service worker install event!');
   event.waitUntil(
     caches.open(cacheName)
       .then(cache => {

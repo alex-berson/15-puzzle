@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>15 Puzzle</title>
-    <meta name="description" content="Arrange tiles in numerical sequence using the extra space in the grid to slide the tiles. ">
-    <meta name="keywords" content="fifteen, puzzle, 15, game, tiles, online, play">
+    <meta name="description" content="Arrange the tiles in numerical sequence using the empty space to slide the numbered tiles">
+    <meta name="keywords" content="fifteen,tile,game,play,online,brain,mind,logic,challenge,school,kids,family">
     <meta name="author" content="Alexander Berson">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     
@@ -15,17 +15,16 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="15 Puzzle">
-    <meta name="theme-color" content="#523436">
     <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
     <link rel="shortcut icon" href="images/favicon.ico">
-    <link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#523436">   
+    <link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#523436">
     <meta name="msapplication-TileColor" content="#523436">
-    <link rel="manifest" href="manifest.json"> 
+    <link rel="manifest" href="manifest.json">
 
     <link rel="stylesheet" type="text/css" href="css/style.css">
-    <script src="js/fifteen.js"></script>
+    <script src="js/fifteen.js" defer></script>
 </head>
 <body class="noselect">
     <div id="outer">
@@ -33,33 +32,47 @@
             <div id="inner">
                 <header>
                     <h1>
-                        <span id="char1">1</span><span id="char2">5</span> <span id="char3">P</span><span id="char4">u</span><span id="char5">z</span><span id="char6">z</span><span id="char7">l</span><span id="char8">e</span>
+                        <span class="char" id="c1">1</span><span class="char" id="c2">5</span> <span class="char" id="c3">P</span><span class="char" id="c4">u</span><span class="char" id="c5">z</span><span class="char" id="c6">z</span><span class="char" id="c7">l</span><span class="char" id="c8">e</span>
                     </h1>
                 </header>
                 <main>
                     <div class="board">
-                        <div id="tile1" class="tile">1</div>
-                        <div id="tile2" class="tile">2</div>
-                        <div id="tile3" class="tile">3</div>
-                        <div id="tile4" class="tile">4</div>
-                        <div id="tile5" class="tile">5</div>
-                        <div id="tile6" class="tile">6</div>
-                        <div id="tile7" class="tile">7</div>
-                        <div id="tile8" class="tile">8</div>
-                        <div id="tile9" class="tile">9</div>
-                        <div id="tile10" class="tile">10</div>
-                        <div id="tile11" class="tile">11</div>
-                        <div id="tile12" class="tile">12</div>
-                        <div id="tile13" class="tile">13</div>
-                        <div id="tile14" class="tile">14</div>
-                        <div id="tile15" class="tile">15</div>
-                        <div id="tile16" class="tile"></div>
+                        <div class="cell"></div>
+                        <div class="cell"></div>
+                        <div class="cell"></div>
+                        <div class="cell"></div>
+                        <div class="cell"></div>
+                        <div class="cell"></div>
+                        <div class="cell"></div>
+                        <div class="cell"></div>      
+                        <div class="cell"></div>
+                        <div class="cell"></div>      
+                        <div class="cell"></div>
+                        <div class="cell"></div> 
+                        <div class="cell"></div> 
+                        <div class="cell"></div> 
+                        <div class="cell"></div> 
+                        <div class="cell"></div> 
+
+                        <div class="tile" id="t1">1</div>
+                        <div class="tile" id="t2">2</div>
+                        <div class="tile" id="t3">3</div>
+                        <div class="tile" id="t4">4</div>
+                        <div class="tile" id="t5">5</div>
+                        <div class="tile" id="t6">6</div>
+                        <div class="tile" id="t7">7</div>
+                        <div class="tile" id="t8">8</div>
+                        <div class="tile" id="t9">9</div>
+                        <div class="tile" id="t10">10</div>
+                        <div class="tile" id="t11">11</div>
+                        <div class="tile" id="t12">12</div>
+                        <div class="tile" id="t13">13</div>
+                        <div class="tile" id="t14">14</div>
+                        <div class="tile" id="t15">15</div>
                     </div>
                 </main>
                 <footer>
-                    <div id="designed">
-                    <a href="#"><span>Designed by Alexander Berson</span></a>
-                    </div>
+                    <div id="designed">Designed by Alexander Berson</div>
                 </footer>
             </div>
         </div>
